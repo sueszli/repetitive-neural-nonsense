@@ -8,6 +8,7 @@ theory:
 pytorch tutorials:
 
 -   intro: https://pytorch.org/tutorials/beginner/basics/intro.html
+-   rnn: https://pytorch.org/tutorials/intermediate/char_rnn_classification_tutorial.html
 
 pytorch docs:
 

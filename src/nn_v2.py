@@ -100,9 +100,6 @@ def main():
         test(args, model, device, test_loader)
         scheduler.step()
 
-    if args.save_model:
-        torch.save(model.state_dict(), "mnist_cnn.pt")
-
 
 if __name__ == "__main__":
     main()
