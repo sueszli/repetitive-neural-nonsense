@@ -1,3 +1,7 @@
+"""
+this is from some random github repo for testing
+"""
+
 from __future__ import print_function
 import argparse
 import torch
@@ -76,18 +80,6 @@ def main():
     parser.add_argument("--log-interval", type=int, default=10, metavar="N", help="how many batches to wait before logging training status")
     args = parser.parse_args()
 
-    torch.manual_seed(args.seed)
-
-    # check architecture
-    device_arg = "cpu"
-    if torch.cuda.is_available():
-        device_arg = "cuda"
-        print("CUDA device is available")
-    elif torch.backends.mps.is_available():
-        device_arg = "mps"
-        print("MPS device is is available")
-    device = torch.device(device_arg)
-
     kwargs = {"num_workers": 1, "pin_memory": True}
     train_loader = torch.utils.data.DataLoader(  # type: ignore
         datasets.MNIST("./data", train=True, download=True, transform=transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))])),
@@ -102,6 +94,7 @@ def main():
         **kwargs
     )
 
+    device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
     model = Net().to(device)
     optimizer = optim.Adadelta(model.parameters(), lr=args.lr)
 
