@@ -16,10 +16,10 @@ import time
 import math
 
 
-alphabet = string.ascii_letters + " .,;'"
+alphabet: str = string.ascii_letters + " .,;'"
 
 
-def get_data_dict(data_path) -> Dict[str, List[str]]:
+def read_data(data_path) -> Dict[str, List[str]]:
     dic = {}  # {language_name: [name, ...]}
 
     for filename in glob.glob(data_path):
@@ -32,9 +32,12 @@ def get_data_dict(data_path) -> Dict[str, List[str]]:
     return dic
 
 
-def one_hot_encode_str(s: str) -> torch.Tensor:
-    # put a 1 in the position of the character in the alphabet and 0s elsewhere, then stack them.
-    # shape: <len(s) x 1 x len(alphabet)>
+def one_hot_encode(s: str) -> torch.Tensor:
+    """
+    encode a name from feature set as one-hot tensor:
+    put a 1 in the position of the character in the alphabet and 0s elsewhere, then stack them.
+    shape: <len(s) x 1 x len(alphabet)>
+    """
 
     tensor = torch.zeros(len(s), 1, len(alphabet))
     for i, c in enumerate(s):
@@ -43,22 +46,10 @@ def one_hot_encode_str(s: str) -> torch.Tensor:
     return tensor
 
 
-def print_encoded_tensor(tensor: torch.Tensor):
-    word = ""
-    for i in range(len(tensor)):
-        argmax_idx: int = torch.argmax(tensor[i][0]).item()  # type: ignore
-        word += alphabet[argmax_idx]
-    print("decoded word: ", word)
-
-    for i in range(len(tensor)):
-        argmax_idx: int = torch.argmax(tensor[i][0]).item()  # type: ignore
-        print(f"i={i} [{alphabet[argmax_idx]}] - ", end=" ")
-        for j in range(len(alphabet)):
-            content = str(tensor[i][0][j].item())
-            content = content.replace("1.0", "\033[92m1\033[0m")
-            content = content.replace("0.0", "0")
-            print(content, end=" ")
-        print()
+def get_random_training_example(data) -> tuple[str, str]:
+    category = random.choice(list(data.keys()))
+    name = random.choice(data[category])
+    return category, name
 
 
 class RNN(nn.Module):
@@ -83,8 +74,12 @@ class RNN(nn.Module):
         return torch.zeros(1, self.hidden_size)
 
 
+def train_loop(rnn, loss_fn, learning_rate, n_iters):
+    pass
+
+
 def main():
-    data: dict = get_data_dict("./data/names/*.txt")
+    data: Dict[str, List[str]] = read_data("./data/names/*.txt")  # {language_name: [name, ...]}
 
     categories = list(data.keys())
     print(f"num languages: {len(categories)=}")  # 18
@@ -96,6 +91,7 @@ def main():
     }
 
     rnn = RNN(input_size=len(alphabet), hidden_size=hyperparams["hidden_size"], output_size=len(categories))
+    loss_fn = nn.NLLLoss()  # negative log likelihood loss, since the last layer is log_softmax
 
 
 if __name__ == "__main__":

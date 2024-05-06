@@ -88,8 +88,8 @@ def main():
     train_batcher = DataLoader(train_data, batch_size=hyperparams["batch_size"], shuffle=True)
     test_batcher = DataLoader(test_data, batch_size=hyperparams["batch_size"], shuffle=False)
 
-    loss_fn: nn.CrossEntropyLoss = nn.CrossEntropyLoss()
-    optimizer: SGD = torch.optim.SGD(model.parameters(), lr=hyperparams["learning_rate"])
+    loss_fn = nn.CrossEntropyLoss()
+    optimizer = torch.optim.SGD(model.parameters(), lr=hyperparams["learning_rate"])
 
     for t in range(hyperparams["epochs"]):
         print(f"Epoch {t+1}\n-------------------------------")
