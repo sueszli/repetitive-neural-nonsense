@@ -1,7 +1,3 @@
-"""
-this is from some random github repo for testing
-"""
-
 from __future__ import print_function
 import argparse
 import torch
