@@ -1,11 +1,3 @@
-learnings:
-
--   rnn: simple and straightforward model but the exploding/vanishing gradients problem makes it perform poorly on long sequences.
--   lstm:
--   gru:
-
----
-
 theory:
 
 -   https://colah.github.io/posts/2015-08-Understanding-LSTMs/
