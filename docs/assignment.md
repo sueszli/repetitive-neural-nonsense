@@ -14,6 +14,8 @@ links:
 
 ---
 
+group name: Group 26+
+
 steps:
 
 -   contact the lecturers and notify them about the group
