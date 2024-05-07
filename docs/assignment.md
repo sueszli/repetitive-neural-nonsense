@@ -20,6 +20,7 @@ links:
 -   codabench: https://www.codabench.org/
 
     -   group name: Group 26+
+    -   competition: https://www.codabench.org/competitions/2469/
     -   our team: https://www.codabench.org/profiles/organization/264/edit/
 
 -   gru baseline from "recommenders" project:
@@ -29,16 +30,13 @@ links:
 
 ---
 
-steps:
+steps left:
 
--   register group, group name, algorithm. communicate with lecture team ✅
--   download dataset: https://recsys.eb.dk/dataset/
--   register on the evaluation system: https://www.codabench.org/competitions/2469/?secret_key=98314b2c-9237-471e-905c-2a88bf6a1d8a
-
----
-
--   run baseline:
-
--   implement best practice model:
-
--   implement your own model
+-   download dataset
+-   register organization on codabench
+-   implement baseline
+-   implement assigned algorithm
+-   optimize, but also absed on subjective criteria like novelty, serendipity, diversity, etc.
+-   test
+-   write report
+-   submit to codabench
