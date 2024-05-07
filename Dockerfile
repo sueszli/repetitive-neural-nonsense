@@ -9,14 +9,23 @@ WORKDIR /workspace
 VOLUME [ "/workspace" ]
 
 # install python dependencies
-RUN pip install --no-cache-dir numpy pandas --break-system-packages
-RUN pip install --no-cache-dir torch torchvision torchaudio --break-system-packages
+RUN python3 -m pip install --upgrade pip
+RUN pip install --no-cache-dir \
+    black pipreqs \
+    numpy pandas \
+    torch torchvision torchaudio \
+    jupyter jupyterlab jupyter_contrib_nbextensions \
+    --break-system-packages
 
-# stay alive so we can exec into the container
-CMD ["tail", "-f", "/dev/null"]
+# dev: find out requirements
+RUN rm -rf requirements.txt
+RUN pipreqs .
 
-# alternatively: run jupyter notebook server
-# RUN pip install --no-cache-dir jupyter jupyterlab jupyter_contrib_nbextensions --break-system-packages
-# ENV JUPYTER_ENABLE_LAB=yes
-# CMD ["jupyter", "notebook", "--ip=0.0.0.0", "--no-browser", "--allow-root", "--ServerApp.token=''", "--ServerApp.password=''", "--ServerApp.allow_origin='*'", "--ServerApp.disable_check_xsrf=True"]
-# EXPOSE 8888
+# deploy: install requirements
+# RUN pip install -r requirements.txt
+
+# run jupyter notebook server
+RUN pip install --no-cache-dir jupyter jupyterlab jupyter_contrib_nbextensions --break-system-packages
+ENV JUPYTER_ENABLE_LAB=yes
+CMD ["jupyter", "notebook", "--ip=0.0.0.0", "--no-browser", "--allow-root", "--ServerApp.token=''", "--ServerApp.password=''", "--ServerApp.allow_origin='*'", "--ServerApp.disable_check_xsrf=True"]
+EXPOSE 8888

@@ -33,10 +33,10 @@ links:
 steps left:
 
 -   download dataset
--   register organization on codabench
--   implement baseline
+-   register organization on "codabench"
+-   implement baseline from the "recommenders" and "ebnerd-benchmark" projects
 -   implement assigned algorithm
 -   optimize, but also absed on subjective criteria like novelty, serendipity, diversity, etc.
 -   test
 -   write report
--   submit to codabench
+-   submit to "codabench"
