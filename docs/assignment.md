@@ -22,21 +22,28 @@ links:
     -   group name: Group 26+
     -   competition: https://www.codabench.org/competitions/2469/
     -   our team: https://www.codabench.org/profiles/organization/264/edit/
+    -   faq: https://www.codabench.org/forums/2387/
 
 -   gru baseline from "recommenders" project:
 
     -   docs: https://recommenders-team.github.io/recommenders/models.html#gru
     -   code: https://github.com/recommenders-team/recommenders/blob/main/recommenders/models/deeprec/models/sequential/gru.py
 
+-   other links:
+
+    -   https://recsys.acm.org/recsys24/challenge/
+
 ---
 
-steps left:
+steps:
 
 -   download dataset
 -   register organization on "codabench"
--   implement baseline from the "recommenders" and "ebnerd-benchmark" projects
--   implement assigned algorithm
--   optimize, but also absed on subjective criteria like novelty, serendipity, diversity, etc.
+-   implement:
+    -   baseline from the "ebnerd-benchmark" projects
+    -   the "gru" model from the "recommenders" project
+    -   one algorithm of choice
+-   optimize
 -   test
 -   write report
 -   submit to "codabench"
