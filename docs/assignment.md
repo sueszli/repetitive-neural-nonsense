@@ -14,8 +14,7 @@ links:
 
 -   dataset: https://recsys.eb.dk/
 
-    -   schema https://recsys.eb.dk/dataset/
-    -   quickstart: https://github.com/ebanalyse/ebnerd-benchmark/blob/main/examples/00_quick_start/nrms_ebnerd.ipynb
+-   quickstart: https://github.com/ebanalyse/ebnerd-benchmark/blob/main/examples/00_quick_start/nrms_ebnerd.ipynb
 
 -   codabench: https://www.codabench.org/
 
