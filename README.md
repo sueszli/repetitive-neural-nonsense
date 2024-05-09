@@ -1,4 +1,4 @@
-model: gru - gated recurrent unit
+assigned model: gru - gated recurrent unit
 
 goal: use dataset to build a news recommendation algorithm, that predicts user engagement with articles
 
@@ -20,7 +20,7 @@ general competition links:
 development links:
 
 -   dataset: https://recsys.eb.dk/
--   quickstart: https://github.com/ebanalyse/ebnerd-benchmark/blob/main/examples/00_quick_start/nrms_ebnerd.ipynb
+-   baseline repository: https://github.com/ebanalyse/ebnerd-benchmark/blob/main/examples/00_quick_start/nrms_ebnerd.ipynb
 -   gru baseline from "recommenders" project:
     -   docs: https://recommenders-team.github.io/recommenders/models.html#gru
     -   code: https://github.com/recommenders-team/recommenders/blob/main/recommenders/models/deeprec/models/sequential/gru.py
@@ -32,10 +32,10 @@ steps:
 -   download dataset ✅
 -   register organization on "codabench" ✅
 -   implement:
-    -   baseline from the "ebnerd-benchmark" projects ✅
+    -   the baseline from the "ebnerd-benchmark" projects ✅
     -   the "gru" model from the "recommenders" project
     -   one algorithm of choice
--   optimize
+-   improve (check out the "ebnerd-benchmark" project for ideas)
 -   test
 -   write report
 -   submit to "codabench"
