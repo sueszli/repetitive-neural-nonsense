@@ -33,9 +33,12 @@ steps:
 -   register organization on "codabench" ✅
 -   implement:
     -   the baseline from the "ebnerd-benchmark" projects ✅
+    -   the "baseline" model from the "recommenders" project
     -   the "gru" model from the "recommenders" project
     -   one algorithm of choice
 -   improve (check out the "ebnerd-benchmark" project for ideas)
 -   test
--   write report
+-   write report pdf
 -   submit to "codabench"
+-   submit to gitlab, add "final" tag
+-   upload project report pdf
