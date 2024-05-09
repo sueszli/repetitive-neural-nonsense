@@ -16,20 +16,17 @@ _general competition links:_
 _development links:_
 
 -   dataset: https://recsys.eb.dk/
--   baseline repository: https://github.com/ebanalyse/ebnerd-benchmark/blob/main/examples/00_quick_start/nrms_ebnerd.ipynb
--   gru baseline from "recommenders" project:
-    -   docs: https://recommenders-team.github.io/recommenders/models.html#gru
+-   ebnerd-benchmark: https://github.com/ebanalyse/ebnerd-benchmark/blob/main/examples/00_quick_start/nrms_ebnerd.ipynb
+-   recommenders:
+    -   quickstart: https://github.com/ebanalyse/ebnerd-benchmark/blob/main/examples/00_quick_start/dataset_ebnerd.ipynb
     -   code: https://github.com/recommenders-team/recommenders/blob/main/recommenders/models/deeprec/models/sequential/gru.py
+    -   docs: https://recommenders-team.github.io/recommenders/models.html#gru
 
 _steps:_
 
 -   download dataset ✅
 -   register organization on "codabench" ✅
--   write code:
-    -   the baseline from the "ebnerd-benchmark" projects ✅
-    -   the "baseline" model from the "recommenders" project → not reproducible, no docs. wrote from scratch in pytorch ✅
-    -   the "gru" model from the "recommenders" project
-    -   one algorithm of choice
+-   implement the a GRU model + an algorithm of your choice, based on the "ebnerd-benchmark" and "recommenders" repository
 -   improve (check out the "ebnerd-benchmark" project for ideas)
 -   test
 -   write report pdf
