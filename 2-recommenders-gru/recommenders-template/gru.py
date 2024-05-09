@@ -3,7 +3,7 @@
 
 import tensorflow as tf
 from keras.layers.legacy_rnn.rnn_cell_impl import GRUCell, LSTMCell
-from recommenders.models.deeprec.models.sequential.sequential_base_model import (
+from sequential_base_model import (
     SequentialBaseModel,
 )
 from tensorflow.compat.v1.nn import dynamic_rnn
@@ -16,9 +16,9 @@ class GRUModel(SequentialBaseModel):
 
     :Citation:
 
-        Kyunghyun Cho, Bart van Merrienboer, Caglar Gulcehre, Dzmitry Bahdanau, 
-        Fethi Bougares, Holger Schwenk, and Yoshua Bengio. Learning Phrase 
-        Representations using RNN Encoder-Decoder for Statistical Machine Translation. 
+        Kyunghyun Cho, Bart van Merrienboer, Caglar Gulcehre, Dzmitry Bahdanau,
+        Fethi Bougares, Holger Schwenk, and Yoshua Bengio. Learning Phrase
+        Representations using RNN Encoder-Decoder for Statistical Machine Translation.
         arXiv preprint arXiv:1406.1078. 2014.
     """
 
@@ -44,9 +44,7 @@ class GRUModel(SequentialBaseModel):
         with tf.compat.v1.name_scope("lstm"):
             self.mask = self.iterator.mask
             self.sequence_length = tf.reduce_sum(input_tensor=self.mask, axis=1)
-            self.history_embedding = tf.concat(
-                [self.item_history_embedding, self.cate_history_embedding], 2
-            )
+            self.history_embedding = tf.concat([self.item_history_embedding, self.cate_history_embedding], 2)
             rnn_outputs, final_state = dynamic_rnn(
                 LSTMCell(self.hidden_size),
                 inputs=self.history_embedding,
@@ -66,9 +64,7 @@ class GRUModel(SequentialBaseModel):
         with tf.compat.v1.name_scope("gru"):
             self.mask = self.iterator.mask
             self.sequence_length = tf.reduce_sum(input_tensor=self.mask, axis=1)
-            self.history_embedding = tf.concat(
-                [self.item_history_embedding, self.cate_history_embedding], 2
-            )
+            self.history_embedding = tf.concat([self.item_history_embedding, self.cate_history_embedding], 2)
             rnn_outputs, final_state = dynamic_rnn(
                 GRUCell(self.hidden_size),
                 inputs=self.history_embedding,

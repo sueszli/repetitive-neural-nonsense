@@ -7,8 +7,8 @@ import abc
 import numpy as np
 import tensorflow as tf
 
-from recommenders.models.deeprec.models.base_model import BaseModel
-from recommenders.models.deeprec.deeprec_utils import cal_metric, load_dict
+from base_model import BaseModel
+from deeprec_utils import cal_metric, load_dict
 
 
 __all__ = ["SequentialBaseModel"]
@@ -32,21 +32,13 @@ class SequentialBaseModel(BaseModel):
         self.need_sample = hparams.need_sample
         self.train_num_ngs = hparams.train_num_ngs
         if self.train_num_ngs is None:
-            raise ValueError(
-                "Please confirm the number of negative samples for each positive instance."
-            )
-        self.min_seq_length = (
-            hparams.min_seq_length if "min_seq_length" in hparams.values() else 1
-        )
-        self.hidden_size = (
-            hparams.hidden_size if "hidden_size" in hparams.values() else None
-        )
+            raise ValueError("Please confirm the number of negative samples for each positive instance.")
+        self.min_seq_length = hparams.min_seq_length if "min_seq_length" in hparams.values() else 1
+        self.hidden_size = hparams.hidden_size if "hidden_size" in hparams.values() else None
         self.graph = tf.Graph() if not graph else graph
 
         with self.graph.as_default():
-            self.sequence_length = tf.compat.v1.placeholder(
-                tf.int32, [None], name="sequence_length"
-            )
+            self.sequence_length = tf.compat.v1.placeholder(tf.int32, [None], name="sequence_length")
 
         super().__init__(hparams, iterator_creator, graph=self.graph, seed=seed)
 
@@ -95,13 +87,9 @@ class SequentialBaseModel(BaseModel):
 
         # check bad input.
         if not self.need_sample and self.train_num_ngs < 1:
-            raise ValueError(
-                "Please specify a positive integer of negative numbers for training without sampling needed."
-            )
+            raise ValueError("Please specify a positive integer of negative numbers for training without sampling needed.")
         if valid_num_ngs < 1:
-            raise ValueError(
-                "Please specify a positive integer of negative numbers for validation."
-            )
+            raise ValueError("Please specify a positive integer of negative numbers for validation.")
 
         if self.need_sample and self.train_num_ngs < 1:
             self.train_num_ngs = 1
@@ -110,9 +98,7 @@ class SequentialBaseModel(BaseModel):
             if not os.path.exists(self.hparams.SUMMARIES_DIR):
                 os.makedirs(self.hparams.SUMMARIES_DIR)
 
-            self.writer = tf.compat.v1.summary.FileWriter(
-                self.hparams.SUMMARIES_DIR, self.sess.graph
-            )
+            self.writer = tf.compat.v1.summary.FileWriter(self.hparams.SUMMARIES_DIR, self.sess.graph)
 
         train_sess = self.sess
         eval_info = list()
@@ -138,22 +124,13 @@ class SequentialBaseModel(BaseModel):
                     epoch_loss += step_loss
                     step += 1
                     if step % self.hparams.show_step == 0:
-                        print(
-                            "step {0:d} , total_loss: {1:.4f}, data_loss: {2:.4f}".format(
-                                step, step_loss, step_data_loss
-                            )
-                        )
+                        print("step {0:d} , total_loss: {1:.4f}, data_loss: {2:.4f}".format(step, step_loss, step_data_loss))
 
             valid_res = self.run_eval(valid_file, valid_num_ngs)
             print(
                 "eval valid at epoch {0}: {1}".format(
                     epoch,
-                    ",".join(
-                        [
-                            "" + str(key) + ":" + str(value)
-                            for key, value in valid_res.items()
-                        ]
-                    ),
+                    ",".join(["" + str(key) + ":" + str(value) for key, value in valid_res.items()]),
                 )
             )
             eval_info.append((epoch, valid_res))
@@ -207,9 +184,7 @@ class SequentialBaseModel(BaseModel):
         group_labels = []
         group = num_ngs + 1
 
-        for batch_data_input in self.iterator.load_data_from_file(
-            filename, min_seq_length=self.min_seq_length, batch_num_ngs=0
-        ):
+        for batch_data_input in self.iterator.load_data_from_file(filename, min_seq_length=self.min_seq_length, batch_num_ngs=0):
             if batch_data_input:
                 step_pred, step_labels = self.eval(load_sess, batch_data_input)
                 preds.extend(np.reshape(step_pred, -1))
@@ -218,9 +193,7 @@ class SequentialBaseModel(BaseModel):
                 group_labels.extend(np.reshape(step_labels, (-1, group)))
 
         res = cal_metric(labels, preds, self.hparams.metrics)
-        res_pairwise = cal_metric(
-            group_labels, group_preds, self.hparams.pairwise_metrics
-        )
+        res_pairwise = cal_metric(group_labels, group_preds, self.hparams.pairwise_metrics)
         res.update(res_pairwise)
         return res
 
@@ -237,9 +210,7 @@ class SequentialBaseModel(BaseModel):
 
         load_sess = self.sess
         with tf.io.gfile.GFile(outfile_name, "w") as wt:
-            for batch_data_input in self.iterator.load_data_from_file(
-                infile_name, batch_num_ngs=0
-            ):
+            for batch_data_input in self.iterator.load_data_from_file(infile_name, batch_num_ngs=0):
                 if batch_data_input:
                     step_pred = self.infer(load_sess, batch_data_input)
                     step_pred = np.reshape(step_pred, -1)
@@ -276,30 +247,16 @@ class SequentialBaseModel(BaseModel):
 
     def _lookup_from_embedding(self):
         """Lookup from embedding variables. A dropout layer follows lookup operations."""
-        self.user_embedding = tf.nn.embedding_lookup(
-            params=self.user_lookup, ids=self.iterator.users
-        )
+        self.user_embedding = tf.nn.embedding_lookup(params=self.user_lookup, ids=self.iterator.users)
         tf.compat.v1.summary.histogram("user_embedding_output", self.user_embedding)
 
-        self.item_embedding = tf.compat.v1.nn.embedding_lookup(
-            params=self.item_lookup, ids=self.iterator.items
-        )
-        self.item_history_embedding = tf.compat.v1.nn.embedding_lookup(
-            params=self.item_lookup, ids=self.iterator.item_history
-        )
-        tf.compat.v1.summary.histogram(
-            "item_history_embedding_output", self.item_history_embedding
-        )
+        self.item_embedding = tf.compat.v1.nn.embedding_lookup(params=self.item_lookup, ids=self.iterator.items)
+        self.item_history_embedding = tf.compat.v1.nn.embedding_lookup(params=self.item_lookup, ids=self.iterator.item_history)
+        tf.compat.v1.summary.histogram("item_history_embedding_output", self.item_history_embedding)
 
-        self.cate_embedding = tf.compat.v1.nn.embedding_lookup(
-            params=self.cate_lookup, ids=self.iterator.cates
-        )
-        self.cate_history_embedding = tf.compat.v1.nn.embedding_lookup(
-            params=self.cate_lookup, ids=self.iterator.item_cate_history
-        )
-        tf.compat.v1.summary.histogram(
-            "cate_history_embedding_output", self.cate_history_embedding
-        )
+        self.cate_embedding = tf.compat.v1.nn.embedding_lookup(params=self.cate_lookup, ids=self.iterator.cates)
+        self.cate_history_embedding = tf.compat.v1.nn.embedding_lookup(params=self.cate_lookup, ids=self.iterator.item_cate_history)
+        tf.compat.v1.summary.histogram("cate_history_embedding_output", self.cate_history_embedding)
 
         involved_items = tf.concat(
             [
@@ -309,9 +266,7 @@ class SequentialBaseModel(BaseModel):
             -1,
         )
         self.involved_items, _ = tf.unique(involved_items)
-        involved_item_embedding = tf.nn.embedding_lookup(
-            params=self.item_lookup, ids=self.involved_items
-        )
+        involved_item_embedding = tf.nn.embedding_lookup(params=self.item_lookup, ids=self.involved_items)
         self.embed_params.append(involved_item_embedding)
 
         involved_cates = tf.concat(
@@ -322,25 +277,17 @@ class SequentialBaseModel(BaseModel):
             -1,
         )
         self.involved_cates, _ = tf.unique(involved_cates)
-        involved_cate_embedding = tf.nn.embedding_lookup(
-            params=self.cate_lookup, ids=self.involved_cates
-        )
+        involved_cate_embedding = tf.nn.embedding_lookup(params=self.cate_lookup, ids=self.involved_cates)
         self.embed_params.append(involved_cate_embedding)
 
-        self.target_item_embedding = tf.concat(
-            [self.item_embedding, self.cate_embedding], -1
-        )
-        tf.compat.v1.summary.histogram(
-            "target_item_embedding_output", self.target_item_embedding
-        )
+        self.target_item_embedding = tf.concat([self.item_embedding, self.cate_embedding], -1)
+        tf.compat.v1.summary.histogram("target_item_embedding_output", self.target_item_embedding)
 
     def _add_norm(self):
         """Regularization for embedding variables and other variables."""
         all_variables, embed_variables = (
             tf.compat.v1.trainable_variables(),
-            tf.compat.v1.trainable_variables(
-                self.sequential_scope._name + "/embedding"
-            ),
+            tf.compat.v1.trainable_variables(self.sequential_scope._name + "/embedding"),
         )
         layer_params = list(set(all_variables) - set(embed_variables))
         layer_params = [a for a in layer_params if "_no_reg" not in a.name]

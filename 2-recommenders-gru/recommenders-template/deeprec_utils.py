@@ -15,7 +15,7 @@ import yaml
 import zipfile
 import pickle as pkl
 
-from recommenders.datasets.download_utils import maybe_download
+from download_utils import maybe_download
 
 
 def flat_config(config):
@@ -268,18 +268,10 @@ def check_nn_config(f_config):
 
     if f_config["model_type"] in ["exDeepFM", "xDeepFM"]:
         if f_config["data_format"] != "ffm":
-            raise ValueError(
-                "For xDeepFM model, data format must be 'ffm', but your set is {0}".format(
-                    f_config["data_format"]
-                )
-            )
+            raise ValueError("For xDeepFM model, data format must be 'ffm', but your set is {0}".format(f_config["data_format"]))
     elif f_config["model_type"] in ["dkn", "DKN"]:
         if f_config["data_format"] != "dkn":
-            raise ValueError(
-                "For dkn model, data format must be 'dkn', but your set is {0}".format(
-                    f_config["data_format"]
-                )
-            )
+            raise ValueError("For dkn model, data format must be 'dkn', but your set is {0}".format(f_config["data_format"]))
     check_type(f_config)
 
 
@@ -312,17 +304,8 @@ class HParams:
             hparams_dict (dict): Dictionary with the model hyperparameters.
         """
         for val in hparams_dict.values():
-            if not (
-                isinstance(val, int)
-                or isinstance(val, float)
-                or isinstance(val, str)
-                or isinstance(val, list)
-            ):
-                raise ValueError(
-                    "Hyperparameter value {} should be integer, float, string or list.".format(
-                        val
-                    )
-                )
+            if not (isinstance(val, int) or isinstance(val, float) or isinstance(val, str) or isinstance(val, list)):
+                raise ValueError("Hyperparameter value {} should be integer, float, string or list.".format(val))
         self._values = hparams_dict
         for hparam in hparams_dict:
             setattr(self, hparam, hparams_dict[hparam])
@@ -556,12 +539,7 @@ def cal_metric(labels, preds, metrics):
             f1 = f1_score(np.asarray(labels), pred)
             res["f1"] = round(f1, 4)
         elif metric == "mean_mrr":
-            mean_mrr = np.mean(
-                [
-                    mrr_score(each_labels, each_preds)
-                    for each_labels, each_preds in zip(labels, preds)
-                ]
-            )
+            mean_mrr = np.mean([mrr_score(each_labels, each_preds) for each_labels, each_preds in zip(labels, preds)])
             res["mean_mrr"] = round(mean_mrr, 4)
         elif metric.startswith("ndcg"):  # format like:  ndcg@2;4;6;8
             ndcg_list = [1, 2]
@@ -569,12 +547,7 @@ def cal_metric(labels, preds, metrics):
             if len(ks) > 1:
                 ndcg_list = [int(token) for token in ks[1].split(";")]
             for k in ndcg_list:
-                ndcg_temp = np.mean(
-                    [
-                        ndcg_score(each_labels, each_preds, k)
-                        for each_labels, each_preds in zip(labels, preds)
-                    ]
-                )
+                ndcg_temp = np.mean([ndcg_score(each_labels, each_preds, k) for each_labels, each_preds in zip(labels, preds)])
                 res["ndcg@{0}".format(k)] = round(ndcg_temp, 4)
         elif metric.startswith("hit"):  # format like:  hit@2;4;6;8
             hit_list = [1, 2]
@@ -582,20 +555,10 @@ def cal_metric(labels, preds, metrics):
             if len(ks) > 1:
                 hit_list = [int(token) for token in ks[1].split(";")]
             for k in hit_list:
-                hit_temp = np.mean(
-                    [
-                        hit_score(each_labels, each_preds, k)
-                        for each_labels, each_preds in zip(labels, preds)
-                    ]
-                )
+                hit_temp = np.mean([hit_score(each_labels, each_preds, k) for each_labels, each_preds in zip(labels, preds)])
                 res["hit@{0}".format(k)] = round(hit_temp, 4)
         elif metric == "group_auc":
-            group_auc = np.mean(
-                [
-                    roc_auc_score(each_labels, each_preds)
-                    for each_labels, each_preds in zip(labels, preds)
-                ]
-            )
+            group_auc = np.mean([roc_auc_score(each_labels, each_preds) for each_labels, each_preds in zip(labels, preds)])
             res["group_auc"] = round(group_auc, 4)
         else:
             raise ValueError("Metric {0} not defined".format(metric))

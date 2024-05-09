@@ -7,7 +7,7 @@ import time
 import os
 import numpy as np
 import tensorflow as tf
-from recommenders.models.deeprec.deeprec_utils import cal_metric
+from deeprec_utils import cal_metric
 
 
 tf.compat.v1.disable_eager_execution()
@@ -33,9 +33,7 @@ class BaseModel:
 
         self.graph = graph if graph is not None else tf.Graph()
         self.iterator = iterator_creator(hparams, self.graph)
-        self.train_num_ngs = (
-            hparams.train_num_ngs if "train_num_ngs" in hparams.values() else None
-        )
+        self.train_num_ngs = hparams.train_num_ngs if "train_num_ngs" in hparams.values() else None
 
         with self.graph.as_default():
             self.hparams = hparams
@@ -46,9 +44,7 @@ class BaseModel:
             self.layer_keeps = tf.compat.v1.placeholder(tf.float32, name="layer_keeps")
             self.keep_prob_train = None
             self.keep_prob_test = None
-            self.is_train_stage = tf.compat.v1.placeholder(
-                tf.bool, shape=(), name="is_training"
-            )
+            self.is_train_stage = tf.compat.v1.placeholder(tf.bool, shape=(), name="is_training")
             self.group = tf.compat.v1.placeholder(tf.int32, shape=(), name="group")
 
             self.initializer = self._get_initializer()
@@ -59,17 +55,13 @@ class BaseModel:
             self.loss = self._get_loss()
             self.saver = tf.compat.v1.train.Saver(max_to_keep=self.hparams.epochs)
             self.update = self._build_train_opt()
-            self.extra_update_ops = tf.compat.v1.get_collection(
-                tf.compat.v1.GraphKeys.UPDATE_OPS
-            )
+            self.extra_update_ops = tf.compat.v1.get_collection(tf.compat.v1.GraphKeys.UPDATE_OPS)
             self.init_op = tf.compat.v1.global_variables_initializer()
             self.merged = self._add_summaries()
 
         # set GPU use with on demand growth
         gpu_options = tf.compat.v1.GPUOptions(allow_growth=True)
-        self.sess = tf.compat.v1.Session(
-            graph=self.graph, config=tf.compat.v1.ConfigProto(gpu_options=gpu_options)
-        )
+        self.sess = tf.compat.v1.Session(graph=self.graph, config=tf.compat.v1.ConfigProto(gpu_options=gpu_options))
         self.sess.run(self.init_op)
 
     @abc.abstractmethod
@@ -103,11 +95,7 @@ class BaseModel:
         elif task == "classification":
             pred = tf.sigmoid(logit)
         else:
-            raise ValueError(
-                "method must be regression or classification, but now is {0}".format(
-                    task
-                )
-            )
+            raise ValueError("method must be regression or classification, but now is {0}".format(task))
         pred = tf.identity(pred, name="pred")
         return pred
 
@@ -122,14 +110,10 @@ class BaseModel:
         l2_loss = tf.zeros([1], dtype=tf.float32)
         # embedding_layer l2 loss
         for param in self.embed_params:
-            l2_loss = tf.add(
-                l2_loss, tf.multiply(self.hparams.embed_l2, tf.nn.l2_loss(param))
-            )
+            l2_loss = tf.add(l2_loss, tf.multiply(self.hparams.embed_l2, tf.nn.l2_loss(param)))
         params = self.layer_params
         for param in params:
-            l2_loss = tf.add(
-                l2_loss, tf.multiply(self.hparams.layer_l2, tf.nn.l2_loss(param))
-            )
+            l2_loss = tf.add(l2_loss, tf.multiply(self.hparams.layer_l2, tf.nn.l2_loss(param)))
         return l2_loss
 
     def _l1_loss(self):
@@ -168,17 +152,11 @@ class BaseModel:
 
     def _get_initializer(self):
         if self.hparams.init_method == "tnormal":
-            return tf.compat.v1.truncated_normal_initializer(
-                stddev=self.hparams.init_value, seed=self.seed
-            )
+            return tf.compat.v1.truncated_normal_initializer(stddev=self.hparams.init_value, seed=self.seed)
         elif self.hparams.init_method == "uniform":
-            return tf.compat.v1.random_uniform_initializer(
-                -self.hparams.init_value, self.hparams.init_value, seed=self.seed
-            )
+            return tf.compat.v1.random_uniform_initializer(-self.hparams.init_value, self.hparams.init_value, seed=self.seed)
         elif self.hparams.init_method == "normal":
-            return tf.compat.v1.random_normal_initializer(
-                stddev=self.hparams.init_value, seed=self.seed
-            )
+            return tf.compat.v1.random_normal_initializer(stddev=self.hparams.init_value, seed=self.seed)
         elif self.hparams.init_method == "xavier_normal":
             return tf.compat.v1.keras.initializers.VarianceScaling(
                 scale=1.0,
@@ -208,9 +186,7 @@ class BaseModel:
                 seed=self.seed,
             )
         else:
-            return tf.compat.v1.truncated_normal_initializer(
-                stddev=self.hparams.init_value, seed=self.seed
-            )
+            return tf.compat.v1.truncated_normal_initializer(stddev=self.hparams.init_value, seed=self.seed)
 
     def _compute_data_loss(self):
         if self.hparams.loss == "cross_entropy_loss":
@@ -313,12 +289,7 @@ class BaseModel:
         train_step = self._train_opt()
         gradients, variables = zip(*train_step.compute_gradients(self.loss))
         if self.hparams.is_clip_norm:
-            gradients = [
-                None
-                if gradient is None
-                else tf.clip_by_norm(gradient, self.hparams.max_grad_norm)
-                for gradient in gradients
-            ]
+            gradients = [None if gradient is None else tf.clip_by_norm(gradient, self.hparams.max_grad_norm) for gradient in gradients]
         return train_step.apply_gradients(zip(gradients, variables))
 
     def _active_layer(self, logit, activation, layer_idx=-1):
@@ -446,9 +417,7 @@ class BaseModel:
             object: An instance of self.
         """
         if self.hparams.write_tfevents:
-            self.writer = tf.compat.v1.summary.FileWriter(
-                self.hparams.SUMMARIES_DIR, self.sess.graph
-            )
+            self.writer = tf.compat.v1.summary.FileWriter(self.hparams.SUMMARIES_DIR, self.sess.graph)
 
         train_sess = self.sess
         for epoch in range(1, self.hparams.epochs + 1):
@@ -469,11 +438,7 @@ class BaseModel:
                 epoch_loss += step_loss
                 step += 1
                 if step % self.hparams.show_step == 0:
-                    print(
-                        "step {0:d} , total_loss: {1:.4f}, data_loss: {2:.4f}".format(
-                            step, step_loss, step_data_loss
-                        )
-                    )
+                    print("step {0:d} , total_loss: {1:.4f}, data_loss: {2:.4f}".format(step, step_loss, step_data_loss))
 
             train_end = time.time()
             train_time = train_end - train_start
@@ -487,52 +452,19 @@ class BaseModel:
 
             eval_start = time.time()
             eval_res = self.run_eval(valid_file)
-            train_info = ",".join(
-                [
-                    str(item[0]) + ":" + str(item[1])
-                    for item in [("logloss loss", epoch_loss / step)]
-                ]
-            )
-            eval_info = ", ".join(
-                [
-                    str(item[0]) + ":" + str(item[1])
-                    for item in sorted(eval_res.items(), key=lambda x: x[0])
-                ]
-            )
+            train_info = ",".join([str(item[0]) + ":" + str(item[1]) for item in [("logloss loss", epoch_loss / step)]])
+            eval_info = ", ".join([str(item[0]) + ":" + str(item[1]) for item in sorted(eval_res.items(), key=lambda x: x[0])])
             if test_file is not None:
                 test_res = self.run_eval(test_file)
-                test_info = ", ".join(
-                    [
-                        str(item[0]) + ":" + str(item[1])
-                        for item in sorted(test_res.items(), key=lambda x: x[0])
-                    ]
-                )
+                test_info = ", ".join([str(item[0]) + ":" + str(item[1]) for item in sorted(test_res.items(), key=lambda x: x[0])])
             eval_end = time.time()
             eval_time = eval_end - eval_start
 
             if test_file is not None:
-                print(
-                    "at epoch {0:d}".format(epoch)
-                    + "\ntrain info: "
-                    + train_info
-                    + "\neval info: "
-                    + eval_info
-                    + "\ntest info: "
-                    + test_info
-                )
+                print("at epoch {0:d}".format(epoch) + "\ntrain info: " + train_info + "\neval info: " + eval_info + "\ntest info: " + test_info)
             else:
-                print(
-                    "at epoch {0:d}".format(epoch)
-                    + "\ntrain info: "
-                    + train_info
-                    + "\neval info: "
-                    + eval_info
-                )
-            print(
-                "at epoch {0:d} , train time: {1:.1f} eval time: {2:.1f}".format(
-                    epoch, train_time, eval_time
-                )
-            )
+                print("at epoch {0:d}".format(epoch) + "\ntrain info: " + train_info + "\neval info: " + eval_info)
+            print("at epoch {0:d} , train time: {1:.1f} eval time: {2:.1f}".format(epoch, train_time, eval_time))
 
         if self.hparams.write_tfevents:
             self.writer.close()
@@ -578,9 +510,7 @@ class BaseModel:
         preds = []
         labels = []
         imp_indexs = []
-        for batch_data_input, imp_index, data_size in self.iterator.load_data_from_file(
-            filename
-        ):
+        for batch_data_input, imp_index, data_size in self.iterator.load_data_from_file(filename):
             step_pred, step_labels = self.eval(load_sess, batch_data_input)
             preds.extend(np.reshape(step_pred, -1))
             labels.extend(np.reshape(step_labels, -1))
@@ -588,9 +518,7 @@ class BaseModel:
         res = cal_metric(labels, preds, self.hparams.metrics)
         if "pairwise_metrics" in self.hparams.values():
             group_labels, group_preds = self.group_labels(labels, preds, imp_indexs)
-            res_pairwise = cal_metric(
-                group_labels, group_preds, self.hparams.pairwise_metrics
-            )
+            res_pairwise = cal_metric(group_labels, group_preds, self.hparams.pairwise_metrics)
             res.update(res_pairwise)
         return res
 
@@ -606,9 +534,7 @@ class BaseModel:
         """
         load_sess = self.sess
         with tf.io.gfile.GFile(outfile_name, "w") as wt:
-            for batch_data_input, _, data_size in self.iterator.load_data_from_file(
-                infile_name
-            ):
+            for batch_data_input, _, data_size in self.iterator.load_data_from_file(infile_name):
                 step_pred = self.infer(load_sess, batch_data_input)
                 step_pred = step_pred[0][:data_size]
                 step_pred = np.reshape(step_pred, -1)
@@ -666,9 +592,7 @@ class BaseModel:
             layer_idx = 0
             hidden_nn_layers = []
             hidden_nn_layers.append(model_output)
-            with tf.compat.v1.variable_scope(
-                "nn_part", initializer=self.initializer
-            ) as scope:
+            with tf.compat.v1.variable_scope("nn_part", initializer=self.initializer) as scope:
                 for idx, layer_size in enumerate(layer_sizes):
                     curr_w_nn_layer = tf.compat.v1.get_variable(
                         name="w_nn_layer" + str(layer_idx),
@@ -681,18 +605,9 @@ class BaseModel:
                         dtype=tf.float32,
                         initializer=tf.compat.v1.zeros_initializer(),
                     )
-                    tf.compat.v1.summary.histogram(
-                        "nn_part/" + "w_nn_layer" + str(layer_idx), curr_w_nn_layer
-                    )
-                    tf.compat.v1.summary.histogram(
-                        "nn_part/" + "b_nn_layer" + str(layer_idx), curr_b_nn_layer
-                    )
-                    curr_hidden_nn_layer = (
-                        tf.tensordot(
-                            hidden_nn_layers[layer_idx], curr_w_nn_layer, axes=1
-                        )
-                        + curr_b_nn_layer
-                    )
+                    tf.compat.v1.summary.histogram("nn_part/" + "w_nn_layer" + str(layer_idx), curr_w_nn_layer)
+                    tf.compat.v1.summary.histogram("nn_part/" + "b_nn_layer" + str(layer_idx), curr_b_nn_layer)
+                    curr_hidden_nn_layer = tf.tensordot(hidden_nn_layers[layer_idx], curr_w_nn_layer, axes=1) + curr_b_nn_layer
 
                     scope = "nn_part" + str(idx)
                     activation = hparams.activation[idx]
@@ -705,31 +620,20 @@ class BaseModel:
                             training=self.is_train_stage,
                         )
 
-                    curr_hidden_nn_layer = self._active_layer(
-                        logit=curr_hidden_nn_layer, activation=activation, layer_idx=idx
-                    )
+                    curr_hidden_nn_layer = self._active_layer(logit=curr_hidden_nn_layer, activation=activation, layer_idx=idx)
                     hidden_nn_layers.append(curr_hidden_nn_layer)
                     layer_idx += 1
                     last_layer_size = layer_size
 
-                w_nn_output = tf.compat.v1.get_variable(
-                    name="w_nn_output", shape=[last_layer_size, 1], dtype=tf.float32
-                )
+                w_nn_output = tf.compat.v1.get_variable(name="w_nn_output", shape=[last_layer_size, 1], dtype=tf.float32)
                 b_nn_output = tf.compat.v1.get_variable(
                     name="b_nn_output",
                     shape=[1],
                     dtype=tf.float32,
                     initializer=tf.compat.v1.zeros_initializer(),
                 )
-                tf.compat.v1.summary.histogram(
-                    "nn_part/" + "w_nn_output" + str(layer_idx), w_nn_output
-                )
-                tf.compat.v1.summary.histogram(
-                    "nn_part/" + "b_nn_output" + str(layer_idx), b_nn_output
-                )
-                nn_output = (
-                    tf.tensordot(hidden_nn_layers[-1], w_nn_output, axes=1)
-                    + b_nn_output
-                )
+                tf.compat.v1.summary.histogram("nn_part/" + "w_nn_output" + str(layer_idx), w_nn_output)
+                tf.compat.v1.summary.histogram("nn_part/" + "b_nn_output" + str(layer_idx), b_nn_output)
+                nn_output = tf.tensordot(hidden_nn_layers[-1], w_nn_output, axes=1) + b_nn_output
                 self.logit = nn_output
         return nn_output
