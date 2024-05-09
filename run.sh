@@ -1,3 +1,7 @@
+# ------------------------------------------- decompress data
+chmod +x data-merge.sh
+./data-merge.sh
+
 # ------------------------------------------- run
 docker-compose up
 
