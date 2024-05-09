@@ -1,31 +1,43 @@
-# ------------------------------------------- decompress data
-chmod +x data-merge.sh
-./data-merge.sh
 
-# ------------------------------------------- run docker container
-docker-compose up
+# ------------------------------------------------------------------------------------------------- decompress data
+# validate ./data/* files
+if [ ! -d data ]; then echo "data/ directory not found"; exit 1; fi
+if ! ls data/*-chunk-* &> /dev/null && ! ls data/*.md5 &> /dev/null; then echo "invalid files found in data/"; exit 1; fi
 
-# ------------------------------------------- use however you like
-docker ps --all
-docker-compose exec <service_name> <command>
-docker exec -it <container_id> /bin/bash
+# create data-merged directory
+rm -rf data-merged
+mkdir data-merged
+echo "created data-merged directory"
 
-# ------------------------------------------- stop, clean up
-docker-compose down
+# merge chunks into data-merged directory
+cat data/*-chunk-* > data-merged/merged.tar.gz
+echo "merged chunks into data-merged/merged.tar.gz"
 
-docker stop $(docker ps -a -q)
-docker rm $(docker ps -a -q)
-docker rmi $(docker images -q)
+# validate checksum
+expected_checksum=$(cat data/*.md5)
+actual_checksum=$(md5sum data-merged/merged.tar.gz | awk '{ print $1 }')
+if [ $expected_checksum != $actual_checksum ]; then echo "checksum mismatch"; exit 1; fi
+echo "checksum matched: $expected_checksum == $actual_checksum"
 
-yes | docker container prune
-yes | docker image prune
-yes | docker volume prune
-yes | docker network prune
-yes | docker system prune
+# untar in data-merged
+tar -xzf data-merged/merged.tar.gz -C data-merged
+rm data-merged/merged.tar.gz
+echo "untarred data-merged/merged.tar.gz"
 
-# ------------------------------------------- check status
-docker ps --all
-docker images
-docker system df
-docker volume ls
-docker network ls
+# ------------------------------------------------------------------------------------------------- install dependencies
+
+if ! command -v python3 &> /dev/null; then echo "python3 missing"; exit 1; fi
+if ! command -v pip &> /dev/null; then echo "pip missing"; exit 1; fi
+
+python3 -m pip install --upgrade pip
+
+# install formatter
+pip install black > /dev/null
+
+# dev: find out requirements
+# rm -rf requirements.txt
+# pip install pipreqs
+# pipreqs .
+
+# prod: install requirements
+pip install -r requirements.txt
