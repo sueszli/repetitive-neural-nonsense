@@ -1,9 +1,6 @@
-[tool.black]
-line-length = 200
-
 [project]
-name = "ebrec"
-description = "Ekstra Bladet Benchmark"
+name = "repetitive-neural-nonsense"
+description = "Ekstra Bladet RecSys Challenge 2024"
 version = "0.0.1"
 authors = [
     { name = "Johannes Kruse", email = "johannes.kruse@eb.dk" }
@@ -39,3 +36,6 @@ tests =[
     "tensorflow>=2.12.0, <2.16.0",
     "torch>=2.0.0, <2.3.0",
 ]
+
+[tool.black]
+line-length = 200
