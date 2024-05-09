@@ -2,7 +2,7 @@
 chmod +x data-merge.sh
 ./data-merge.sh
 
-# ------------------------------------------- run
+# ------------------------------------------- run docker container
 docker-compose up
 
 # ------------------------------------------- use however you like
@@ -23,7 +23,7 @@ yes | docker volume prune
 yes | docker network prune
 yes | docker system prune
 
-# ------------------------------------------- check
+# ------------------------------------------- check status
 docker ps --all
 docker images
 docker system df
