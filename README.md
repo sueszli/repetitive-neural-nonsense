@@ -32,7 +32,7 @@ steps:
 -   download dataset ✅
 -   register organization on "codabench" ✅
 -   implement:
-    -   baseline from the "ebnerd-benchmark" projects
+    -   baseline from the "ebnerd-benchmark" projects ✅
     -   the "gru" model from the "recommenders" project
     -   one algorithm of choice
 -   optimize
