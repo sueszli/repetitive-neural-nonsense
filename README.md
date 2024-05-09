@@ -1,12 +1,10 @@
-# RecSys Challenge 2024
-
 model: gru
 
 goal: use dataset to build a news recommendation algorithm, that predicts user engagement with articles
 
 ---
 
-competition links:
+general competition links:
 
 -   assignment: https://tuwel.tuwien.ac.at/mod/page/view.php?id=2281418
 -   gitlab: https://gitlab.tuwien.ac.at/recsys-laboratory/teaching/24ss-recsys-lecture/Group_26
@@ -31,7 +29,7 @@ development links:
 
 steps:
 
--   download dataset (to this repo)
+-   download dataset → chunked and added to this repository
 -   register organization on "codabench" (waiting)
 -   implement:
     -   baseline from the "ebnerd-benchmark" projects
