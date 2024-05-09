@@ -1,4 +1,4 @@
-model: gru
+model: gru - gated recurrent unit
 
 goal: use dataset to build a news recommendation algorithm, that predicts user engagement with articles
 
@@ -30,7 +30,7 @@ development links:
 steps:
 
 -   download dataset → chunked and added to this repository
--   register organization on "codabench" (waiting)
+-   register organization on "codabench" → waiting for team
 -   implement:
     -   baseline from the "ebnerd-benchmark" projects
     -   the "gru" model from the "recommenders" project
