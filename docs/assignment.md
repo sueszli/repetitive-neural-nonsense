@@ -29,8 +29,8 @@ development links:
 
 steps:
 
--   download dataset ✅
--   register organization on "codabench" ✅
+-   download dataset (to this repo)
+-   register organization on "codabench" (waiting)
 -   implement:
     -   baseline from the "ebnerd-benchmark" projects
     -   the "gru" model from the "recommenders" project
