@@ -24,6 +24,8 @@ dependencies = [
     "tqdm",
     "jupyter",
     "pytest",
+
+    "pandas"
 ]
 
 [tool.black]
