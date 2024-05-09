@@ -3,7 +3,8 @@ name = "repetitive-neural-nonsense"
 description = "Ekstra Bladet RecSys Challenge 2024"
 version = "0.0.1"
 authors = [
-    { name = "Johannes Kruse", email = "johannes.kruse@eb.dk" }
+    { name = "Yahya Jabary"},
+    { name = "Johannes Kruse", email = "johannes.kruse@eb.dk" },
 ]
 requires-python = ">=3.10, <3.12"
 dependencies = [
@@ -21,16 +22,8 @@ dependencies = [
     "polars==0.20.8",
     "pyyaml==6.0.1",
     "tqdm",
-]
-
-[project.optional-dependencies]
-# pip install "my_project[extras]"
-# pip install -e .'[notebooks]'
-notebooks = [
     "transformers", 
-    "jupyter"
-]
-tests =[
+    "jupyter",
     "pytest", 
     "transformers>=4.30.0, <4.37.3", 
     "tensorflow>=2.12.0, <2.16.0",
