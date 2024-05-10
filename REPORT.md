@@ -1,1 +1,0 @@
-Unlike a general recommender such as Matrix Factorization or xDeepFM which doesn't consider the order of the user's activities, sequential recommender systems take the sequence of the user behaviors as context and the goal is to predict the items that the user will interact in a short time (in an extreme case, the item that the user will interact next).

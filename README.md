@@ -5,6 +5,7 @@ assigned model: gru - gated recurrent unit
 _general competition links:_
 
 -   assignment: https://tuwel.tuwien.ac.at/mod/page/view.php?id=2281418
+    -   clarification: https://tuwel.tuwien.ac.at/mod/moodleoverflow/discussion.php?d=8864
 -   gitlab: https://gitlab.tuwien.ac.at/recsys-laboratory/teaching/24ss-recsys-lecture/Group_26
 -   acm recsys challenge: https://www.recsyschallenge.com/2024/
 -   acm conference: https://recsys.acm.org/recsys24/challenge/
@@ -24,11 +25,16 @@ _development links:_
 
 _steps:_
 
+-   register group and algorithm on tuwel, register organization on "codabench" ✅
 -   download dataset ✅
--   register organization on "codabench" ✅
--   implement the a GRU model + an algorithm of your choice, based on the "ebnerd-benchmark" and "recommenders" repository
--   improve. check out "beyond metrics" section in the "ebnerd-benchmark" repository
--   test
+
+-   implement 3 algorithms:
+
+    -   baseline model from the repository "NRMS on EB-NeRD" from "ebnerd-benchmark"
+    -   "gru" from "recommenders"
+    -   algorithm of choice
+
+-   improve: check out "beyond metrics" section in the "ebnerd-benchmark" repository
 -   write report pdf
 -   submit to "codabench"
 -   submit to gitlab, add "final" tag

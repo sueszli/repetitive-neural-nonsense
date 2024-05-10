@@ -78,9 +78,7 @@ class LSTURModel(BaseModel):
             object: the user encoder of LSTUR.
         """
         hparams = self.hparams
-        his_input_title = keras.Input(
-            shape=(hparams.his_size, hparams.title_size), dtype="int32"
-        )
+        his_input_title = keras.Input(shape=(hparams.his_size, hparams.title_size), dtype="int32")
         user_indexes = keras.Input(shape=(1,), dtype="int32")
 
         user_embedding_layer = layers.Embedding(
@@ -90,9 +88,7 @@ class LSTURModel(BaseModel):
             embeddings_initializer="zeros",
         )
 
-        long_u_emb = layers.Reshape((hparams.gru_unit,))(
-            user_embedding_layer(user_indexes)
-        )
+        long_u_emb = layers.Reshape((hparams.gru_unit,))(user_embedding_layer(user_indexes))
         click_title_presents = layers.TimeDistributed(titleencoder)(his_input_title)
 
         if type == "ini":
@@ -120,9 +116,7 @@ class LSTURModel(BaseModel):
                 kernel_initializer=keras.initializers.glorot_uniform(seed=self.seed),
             )(user_present)
 
-        model = keras.Model(
-            [his_input_title, user_indexes], user_present, name="user_encoder"
-        )
+        model = keras.Model([his_input_title, user_indexes], user_present, name="user_encoder")
         return model
 
     def _build_newsencoder(self, embedding_layer):
@@ -149,9 +143,7 @@ class LSTURModel(BaseModel):
         )(y)
         print(y)
         y = layers.Dropout(hparams.dropout)(y)
-        y = layers.Masking()(
-            OverwriteMasking()([y, ComputeMasking()(sequences_input_title)])
-        )
+        y = layers.Masking()(OverwriteMasking()([y, ComputeMasking()(sequences_input_title)]))
         pred_title = AttLayer2(hparams.attention_hidden_dim, seed=self.seed)(y)
         print(pred_title)
         model = keras.Model(sequences_input_title, pred_title, name="news_encoder")
@@ -167,12 +159,8 @@ class LSTURModel(BaseModel):
         """
         hparams = self.hparams
 
-        his_input_title = keras.Input(
-            shape=(hparams.his_size, hparams.title_size), dtype="int32"
-        )
-        pred_input_title = keras.Input(
-            shape=(hparams.npratio + 1, hparams.title_size), dtype="int32"
-        )
+        his_input_title = keras.Input(shape=(hparams.his_size, hparams.title_size), dtype="int32")
+        pred_input_title = keras.Input(shape=(hparams.npratio + 1, hparams.title_size), dtype="int32")
         pred_input_title_one = keras.Input(
             shape=(
                 1,
@@ -205,8 +193,6 @@ class LSTURModel(BaseModel):
         pred_one = layers.Activation(activation="sigmoid")(pred_one)
 
         model = keras.Model([user_indexes, his_input_title, pred_input_title], preds)
-        scorer = keras.Model(
-            [user_indexes, his_input_title, pred_input_title_one], pred_one
-        )
+        scorer = keras.Model([user_indexes, his_input_title, pred_input_title_one], pred_one)
 
         return model, scorer
