@@ -37,11 +37,7 @@ df_articles = (
     .with_columns(pl.Series(TOKEN_COL, np.random.randint(0, 20, (1, 10))))
     .collect()
 )
-df_history = (
-    pl.scan_parquet(PATH_DATA.joinpath("ebnerd", "history.parquet"))
-    .select(DEFAULT_USER_COL, DEFAULT_HISTORY_ARTICLE_ID_COL)
-    .with_columns(pl.col(DEFAULT_HISTORY_ARTICLE_ID_COL).list.tail(3))
-)
+df_history = pl.scan_parquet(PATH_DATA.joinpath("ebnerd", "history.parquet")).select(DEFAULT_USER_COL, DEFAULT_HISTORY_ARTICLE_ID_COL).with_columns(pl.col(DEFAULT_HISTORY_ARTICLE_ID_COL).list.tail(3))
 df_behaviors = (
     pl.scan_parquet(PATH_DATA.joinpath("ebnerd", "behaviors.parquet"))
     .select(DEFAULT_USER_COL, DEFAULT_INVIEW_ARTICLES_COL, DEFAULT_CLICKED_ARTICLES_COL)
@@ -51,9 +47,7 @@ df_behaviors = (
     .pipe(create_binary_labels_column)
 )
 # => MAPPINGS:
-article_mapping = create_article_id_to_value_mapping(
-    df=df_articles, value_col=TOKEN_COL
-)
+article_mapping = create_article_id_to_value_mapping(df=df_articles, value_col=TOKEN_COL)
 user_mapping = create_user_id_to_int_mapping(df=df_behaviors)
 # => NPRATIO IMPRESSION - SAME LENGTHS:
 df_behaviors_train = df_behaviors.filter(pl.col(N_SAMPLES) == pl.col(N_SAMPLES).min())
@@ -77,18 +71,12 @@ def test_NRMSDataLoader():
 
     assert train_dataloader.__len__() == int(np.ceil(df_behaviors_train.shape[0] / 100))
     assert len(batch) == 2, "There should be two outputs: (inputs, labels)"
-    assert (
-        len(batch[0]) == 2
-    ), "NRMS has two outputs (his_input_title, pred_input_title_one)"
+    assert len(batch[0]) == 2, "NRMS has two outputs (his_input_title, pred_input_title_one)"
 
     for type_in_batch in batch[0][0]:
-        assert isinstance(
-            type_in_batch.ravel()[0], np.integer
-        ), "Expected output to be integer; used for lookup value"
+        assert isinstance(type_in_batch.ravel()[0], np.integer), "Expected output to be integer; used for lookup value"
 
-    assert isinstance(
-        batch[1].ravel()[0], np.integer
-    ), "Expected output to be integer; this is label"
+    assert isinstance(batch[1].ravel()[0], np.integer), "Expected output to be integer; this is label"
 
     test_dataloader = NRMSDataLoader(
         behaviors=df_behaviors,
@@ -100,9 +88,7 @@ def test_NRMSDataLoader():
     )
 
     batch = test_dataloader.__iter__().__next__()
-    assert len(batch[1]) == sum(
-        label_lengths[:BATCH_SIZE]
-    ), "Should have unfolded all the test samples"
+    assert len(batch[1]) == sum(label_lengths[:BATCH_SIZE]), "Should have unfolded all the test samples"
 
 
 @time_it(True)
@@ -120,18 +106,12 @@ def test_LSTURDataLoader():
 
     assert train_dataloader.__len__() == int(np.ceil(df_behaviors_train.shape[0] / 100))
     assert len(batch) == 2, "There should be two outputs: (inputs, labels)"
-    assert (
-        len(batch[0]) == 3
-    ), "LSTUR has two outputs (user_indexes, his_input_title, pred_input_title_one)"
+    assert len(batch[0]) == 3, "LSTUR has two outputs (user_indexes, his_input_title, pred_input_title_one)"
 
     for type_in_batch in batch[0][0]:
-        assert isinstance(
-            type_in_batch.ravel()[0], np.integer
-        ), "Expected output to be integer; used for lookup value"
+        assert isinstance(type_in_batch.ravel()[0], np.integer), "Expected output to be integer; used for lookup value"
 
-    assert isinstance(
-        batch[1].ravel()[0], np.integer
-    ), "Expected output to be integer; this is label"
+    assert isinstance(batch[1].ravel()[0], np.integer), "Expected output to be integer; this is label"
 
     test_dataloader = LSTURDataLoader(
         behaviors=df_behaviors,
@@ -144,18 +124,14 @@ def test_LSTURDataLoader():
     )
 
     batch = test_dataloader.__iter__().__next__()
-    assert len(batch[1]) == sum(
-        label_lengths[:BATCH_SIZE]
-    ), "Should have unfolded all the test samples"
+    assert len(batch[1]) == sum(label_lengths[:BATCH_SIZE]), "Should have unfolded all the test samples"
 
 
 @time_it(True)
 def test_NAMLDataLoader():
     body_mapping = article_mapping
     category_mapping = create_lookup_dict(
-        df_articles.select(pl.col(DEFAULT_CATEGORY_COL).unique()).with_row_index(
-            "row_nr"
-        ),
+        df_articles.select(pl.col(DEFAULT_CATEGORY_COL).unique()).with_row_index("row_nr"),
         key=DEFAULT_CATEGORY_COL,
         value="row_nr",
     )
@@ -176,15 +152,9 @@ def test_NAMLDataLoader():
 
     assert train_dataloader.__len__() == int(np.ceil(df_behaviors_train.shape[0] / 100))
     assert len(batch) == 2, "There should be two outputs: (inputs, labels)"
-    assert (
-        len(batch[0]) == 8
-    ), "NAML has two outputs (his_input_title,his_input_body,his_input_vert,his_input_subvert,pred_input_title,pred_input_body,pred_input_vert,pred_input_subvert)"
+    assert len(batch[0]) == 8, "NAML has two outputs (his_input_title,his_input_body,his_input_vert,his_input_subvert,pred_input_title,pred_input_body,pred_input_vert,pred_input_subvert)"
 
     for type_in_batch in batch[0][0]:
-        assert isinstance(
-            type_in_batch.ravel()[0], np.integer
-        ), "Expected output to be integer; used for lookup value"
+        assert isinstance(type_in_batch.ravel()[0], np.integer), "Expected output to be integer; used for lookup value"
 
-    assert isinstance(
-        batch[1].ravel()[0], np.integer
-    ), "Expected output to be integer; this is label"
+    assert isinstance(batch[1].ravel()[0], np.integer), "Expected output to be integer; this is label"
