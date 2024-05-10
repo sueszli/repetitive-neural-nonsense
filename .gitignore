@@ -2,6 +2,33 @@ tmp
 data-merged
 pytorch_data
 
+share/python-wheels/
+pip-wheel-metadata/
+.ipynb_checkpoints/
+.installed.cfg
+develop-eggs/
+__pycache__/
+*.egg-info/
+downloads/
+.DS_Store
+.Python
+wheels/
+.vscode
+mlruns
+build/
+.eggs/
+lib64/
+parts/
+sdist/
+dist/
+eggs/
+lib/
+var/
+*.egg
+venv/
+build
+venv
+
 # ------------------------------------------------------------
 
 # Byte-compiled / optimized / DLL files
