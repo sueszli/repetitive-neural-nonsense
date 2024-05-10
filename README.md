@@ -27,7 +27,7 @@ _steps:_
 -   download dataset ✅
 -   register organization on "codabench" ✅
 -   implement the a GRU model + an algorithm of your choice, based on the "ebnerd-benchmark" and "recommenders" repository
--   improve (check out the "ebnerd-benchmark" project for ideas)
+-   improve (check out the "ebnerd-benchmark" repository for metrics)
 -   test
 -   write report pdf
 -   submit to "codabench"
