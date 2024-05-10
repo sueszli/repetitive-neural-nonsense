@@ -1,6 +1,14 @@
+# model logs
+
+runs
+
+# decompressed data
+
 tmp
 data-merged
 pytorch_data
+
+# bunch of stuff from other github repos
 
 share/python-wheels/
 pip-wheel-metadata/
