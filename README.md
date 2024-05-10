@@ -23,10 +23,11 @@ _development links:_
 -   ebnerd-benchmark:
 
     -   quickstart: https://github.com/ebanalyse/ebnerd-benchmark/blob/main/examples/00_quick_start/nrms_ebnerd.ipynb
+    -   LSTUR implementation: https://github.com/ebanalyse/ebnerd-benchmark/blob/main/examples/00_quick_start/lstur_dummy.py 🔥
 
 -   recommenders:
     -   quickstart: https://github.com/ebanalyse/ebnerd-benchmark/blob/main/examples/00_quick_start/dataset_ebnerd.ipynb
-    -   RNN implementation: https://github.com/recommenders-team/recommenders/blob/main/examples/00_quick_start/lstur_MIND.ipynb 🔥
+    -   LSTUR implementation: https://github.com/recommenders-team/recommenders/blob/main/examples/00_quick_start/lstur_MIND.ipynb 🔥
     -   code: https://github.com/recommenders-team/recommenders/blob/main/recommenders/models/deeprec/models/sequential/gru.py
     -   docs: https://recommenders-team.github.io/recommenders/models.html#gru
 
@@ -44,7 +45,7 @@ _steps:_
 
 -   implement 3 algorithms:
 
-    -   baseline model from the repository "NRMS on EB-NeRD" from "ebnerd-benchmark"
+    -   baseline model from the repository "NRMS on EB-NeRD" from "ebnerd-benchmark" ✅
     -   "GRU" from "recommenders"
     -   some algorithm of choice
 
