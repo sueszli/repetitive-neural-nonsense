@@ -16,10 +16,17 @@ _general competition links:_
 
 _development links:_
 
--   dataset: https://recsys.eb.dk/
--   ebnerd-benchmark: https://github.com/ebanalyse/ebnerd-benchmark/blob/main/examples/00_quick_start/nrms_ebnerd.ipynb
+-   dataset:
+
+    -   description: https://recsys.eb.dk/dataset/
+
+-   ebnerd-benchmark:
+
+    -   quickstart: https://github.com/ebanalyse/ebnerd-benchmark/blob/main/examples/00_quick_start/nrms_ebnerd.ipynb
+
 -   recommenders:
     -   quickstart: https://github.com/ebanalyse/ebnerd-benchmark/blob/main/examples/00_quick_start/dataset_ebnerd.ipynb
+    -   RNN implementation: https://github.com/recommenders-team/recommenders/blob/main/examples/00_quick_start/lstur_MIND.ipynb 🔥
     -   code: https://github.com/recommenders-team/recommenders/blob/main/recommenders/models/deeprec/models/sequential/gru.py
     -   docs: https://recommenders-team.github.io/recommenders/models.html#gru
 
@@ -31,8 +38,8 @@ _steps:_
 -   implement 3 algorithms:
 
     -   baseline model from the repository "NRMS on EB-NeRD" from "ebnerd-benchmark"
-    -   "gru" from "recommenders"
-    -   algorithm of choice
+    -   "GRU" from "recommenders"
+    -   some algorithm of choice
 
 -   improve: check out "beyond metrics" section in the "ebnerd-benchmark" repository
 -   write report pdf

@@ -1,3 +1,5 @@
+# source: https://github.com/ebanalyse/ebnerd-benchmark/blob/3813fc252ab9657fb30934eb8ca13f75b73409b3/src/ebrec/utils/_constants.py
+
 # BEHAVIORS
 DEFAULT_IMPRESSION_TIMESTAMP_COL = "impression_time"
 DEFAULT_SCROLL_PERCENTAGE_COL = "scroll_percentage"
