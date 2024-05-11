@@ -102,6 +102,7 @@ article_mapping = create_article_id_to_value_mapping(df=df_articles, value_col=t
 
 from ebrec.models.newsrec.model_config import hparams_lstur
 from ebrec.models.newsrec.lstur import LSTURModel
+from ebrec.models.newsrec.dataloader import LSTURDataLoader
 
 """
 define model
@@ -114,7 +115,6 @@ model.model.summary()
 
 # -----------------------------------------------------------------------------------------------------
 
-from ebrec.models.newsrec.dataloader import LSTURDataLoader
 
 """
 create batches
@@ -124,7 +124,6 @@ BATCH_SIZE = 300
 HISTORY_SIZE = config.history_size
 TITLE_SIZE = config.title_size
 NPRATIO = 4
-
 
 his_input_title_shape = (HISTORY_SIZE, TITLE_SIZE)
 pred_input_title_shape = (NPRATIO + 1, TITLE_SIZE)
@@ -145,6 +144,31 @@ print(pred_input_title.shape)
 print(user_indexes.shape)
 print(label_data.shape)
 
+
+train_dataloader = LSTURDataLoader(
+    behaviors=df_train,
+    article_dict=article_mapping,
+    unknown_representation="zeros",
+    history_column=DEFAULT_HISTORY_ARTICLE_ID_COL,
+    eval_mode=False,
+    batch_size=64,
+)
+val_dataloader = LSTURDataLoader(
+    behaviors=df_validation,
+    article_dict=article_mapping,
+    unknown_representation="zeros",
+    history_column=DEFAULT_HISTORY_ARTICLE_ID_COL,
+    eval_mode=True,
+    batch_size=32,
+)
+test_dataloader = LSTURDataLoader(
+    behaviors=df_test,
+    article_dict=article_mapping,
+    unknown_representation="zeros",
+    history_column=DEFAULT_HISTORY_ARTICLE_ID_COL,
+    eval_mode=True,
+    batch_size=32,
+)
 
 """
 train and predict
