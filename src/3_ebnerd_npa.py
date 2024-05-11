@@ -105,7 +105,10 @@ batch data
 """
 from ebrec.models.newsrec.dataloader import LSTURDataLoader  # NPA and LSTUR share the same dataloader
 
+user_id_mapping = {user_id: i for i, user_id in enumerate(df_train[DEFAULT_USER_COL].unique())}
+
 train_dataloader = LSTURDataLoader(
+    user_id_mapping=user_id_mapping,
     behaviors=df_train,
     article_dict=article_mapping,
     unknown_representation="zeros",
@@ -114,6 +117,7 @@ train_dataloader = LSTURDataLoader(
     batch_size=64,
 )
 val_dataloader = LSTURDataLoader(
+    user_id_mapping=user_id_mapping,
     behaviors=df_validation,
     article_dict=article_mapping,
     unknown_representation="zeros",
@@ -122,6 +126,7 @@ val_dataloader = LSTURDataLoader(
     batch_size=32,
 )
 test_dataloader = LSTURDataLoader(
+    user_id_mapping=user_id_mapping,
     behaviors=df_test,
     article_dict=article_mapping,
     unknown_representation="zeros",
