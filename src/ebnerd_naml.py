@@ -105,6 +105,7 @@ batch data
 """
 from ebrec.models.newsrec.dataloader import NAMLDataLoader
 
+assert article_mapping is not None
 train_dataloader = NAMLDataLoader(
     behaviors=df_train,
     article_dict=article_mapping,
@@ -131,26 +132,26 @@ test_dataloader = NAMLDataLoader(
 )
 
 
-"""
-train model
-"""
-from ebrec.models.newsrec.model_config import hparams_naml
-from ebrec.models.newsrec.naml import NAMLModel
+# """
+# train model
+# """
+# from ebrec.models.newsrec.model_config import hparams_naml
+# from ebrec.models.newsrec.naml import NAMLModel
 
-MODEL_NAME = "NAML"
-LOG_DIR = f"./runs/{MODEL_NAME}"
-MODEL_WEIGHTS = f"./runs/data/state_dict/{MODEL_NAME}/weights"
-tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=LOG_DIR, histogram_freq=1)
-early_stopping_callback = tf.keras.callbacks.EarlyStopping(monitor="val_loss", patience=2)
-modelcheckpoint_callback = tf.keras.callbacks.ModelCheckpoint(filepath=MODEL_WEIGHTS, save_best_only=True, save_weights_only=True, verbose=1)
+# MODEL_NAME = "NAML"
+# LOG_DIR = f"./runs/{MODEL_NAME}"
+# MODEL_WEIGHTS = f"./runs/data/state_dict/{MODEL_NAME}/weights"
+# tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=LOG_DIR, histogram_freq=1)
+# early_stopping_callback = tf.keras.callbacks.EarlyStopping(monitor="val_loss", patience=2)
+# modelcheckpoint_callback = tf.keras.callbacks.ModelCheckpoint(filepath=MODEL_WEIGHTS, save_best_only=True, save_weights_only=True, verbose=1)
 
-config = hparams_naml
-model = NAMLModel(hparams=config, word2vec_embedding=word2vec_embedding, seed=42)
-model.model.summary()
-hist = model.model.fit(
-    train_dataloader,
-    validation_data=val_dataloader,
-    epochs=1,
-    callbacks=[tensorboard_callback, early_stopping_callback, modelcheckpoint_callback],
-)
-model.model.load_weights(filepath=MODEL_WEIGHTS)
+# config = hparams_naml
+# model = NAMLModel(hparams=config, word2vec_embedding=word2vec_embedding, seed=42)
+# model.model.summary()
+# hist = model.model.fit(
+#     train_dataloader,
+#     validation_data=val_dataloader,
+#     epochs=1,
+#     callbacks=[tensorboard_callback, early_stopping_callback, modelcheckpoint_callback],
+# )
+# model.model.load_weights(filepath=MODEL_WEIGHTS)
