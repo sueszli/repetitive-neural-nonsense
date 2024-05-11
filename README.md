@@ -46,7 +46,7 @@ _steps:_
 -   implement 3 algorithms:
 
     -   baseline model from the repository "NRMS on EB-NeRD" from "ebnerd-benchmark" ✅
-    -   "GRU" from "recommenders"
+    -   "GRU" from "recommenders" repository (it's the core of LSTUR) ✅
     -   some algorithm of choice
 
 -   improve: check out "beyond metrics" section in the "ebnerd-benchmark" repository
