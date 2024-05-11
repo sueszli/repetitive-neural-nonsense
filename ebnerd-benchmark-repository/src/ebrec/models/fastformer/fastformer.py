@@ -85,10 +85,7 @@ class FastSelfAttention(nn.Module):
         super(FastSelfAttention, self).__init__()
         self.config = config
         if config.hidden_size % config.num_attention_heads != 0:
-            raise ValueError(
-                "The hidden size (%d) is not a multiple of the number of attention "
-                "heads (%d)" % (config.hidden_size, config.num_attention_heads)
-            )
+            raise ValueError("The hidden size (%d) is not a multiple of the number of attention " "heads (%d)" % (config.hidden_size, config.num_attention_heads))
         self.attention_head_size = int(config.hidden_size / config.num_attention_heads)
         self.num_attention_heads = config.num_attention_heads
         self.all_head_size = self.num_attention_heads * self.attention_head_size
@@ -124,9 +121,7 @@ class FastSelfAttention(nn.Module):
         x = x.view(*new_x_shape)
         return x.permute(0, 2, 1, 3)
 
-    def forward(
-        self, hidden_states: torch.Tensor, attention_mask: torch.Tensor
-    ) -> torch.Tensor:
+    def forward(self, hidden_states: torch.Tensor, attention_mask: torch.Tensor) -> torch.Tensor:
         """Computes the forward pass of the fast self-attention layer.
         Args:
             hidden_states (torch.Tensor): Input tensor of shape (batch_size, sequence_length, hidden_size).
@@ -140,24 +135,15 @@ class FastSelfAttention(nn.Module):
         mixed_query_layer = self.query(hidden_states)
         mixed_key_layer = self.key(hidden_states)
 
-        query_for_score = (
-            self.query_att(mixed_query_layer).transpose(1, 2)
-            / self.attention_head_size**0.5
-        )
+        query_for_score = self.query_att(mixed_query_layer).transpose(1, 2) / self.attention_head_size**0.5
         query_for_score += attention_mask
         query_weight = self.softmax(query_for_score).unsqueeze(2)
         query_layer = self.transpose_for_scores(mixed_query_layer)
-        pooled_query = (
-            torch.matmul(query_weight, query_layer)
-            .transpose(1, 2)
-            .view(-1, 1, self.num_attention_heads * self.attention_head_size)
-        )
+        pooled_query = torch.matmul(query_weight, query_layer).transpose(1, 2).view(-1, 1, self.num_attention_heads * self.attention_head_size)
         pooled_query_repeat = pooled_query.repeat(1, seq_len, 1)
         mixed_query_key_layer = mixed_key_layer * pooled_query_repeat
 
-        query_key_score = (
-            self.key_att(mixed_query_key_layer) / self.attention_head_size**0.5
-        ).transpose(1, 2)
+        query_key_score = (self.key_att(mixed_query_key_layer) / self.attention_head_size**0.5).transpose(1, 2)
 
         query_key_score += attention_mask
 
@@ -167,10 +153,7 @@ class FastSelfAttention(nn.Module):
         pooled_key = torch.matmul(query_key_weight, key_layer)
 
         weighted_value = (pooled_key * query_layer).transpose(1, 2)
-        weighted_value = weighted_value.reshape(
-            weighted_value.size()[:-2]
-            + (self.num_attention_heads * self.attention_head_size,)
-        )
+        weighted_value = weighted_value.reshape(weighted_value.size()[:-2] + (self.num_attention_heads * self.attention_head_size,))
         weighted_value = self.transform(weighted_value) + mixed_query_layer
 
         return weighted_value
@@ -219,9 +202,7 @@ class FastformerLayer(nn.Module):
         self.intermediate = BertIntermediate(config)
         self.output = BertOutput(config)
 
-    def forward(
-        self, hidden_states: torch.Tensor, attention_mask: torch.Tensor
-    ) -> torch.Tensor:
+    def forward(self, hidden_states: torch.Tensor, attention_mask: torch.Tensor) -> torch.Tensor:
         """Computes the forward pass of the Fastformer layer.
         Processes the input through a FastAttention mechanism, followed by a BertIntermediate layer,
         and finally through a BertOutput layer to produce the final layer output.
@@ -243,12 +224,8 @@ class SequenceFastformerEncoder(nn.Module):
     def __init__(self, config, pooler_count=1):
         super(SequenceFastformerEncoder, self).__init__()
         self.config = config
-        self.encoders = nn.ModuleList(
-            [FastformerLayer(config) for _ in range(config.num_hidden_layers)]
-        )
-        self.position_embeddings = nn.Embedding(
-            config.max_position_embeddings, config.hidden_size
-        )
+        self.encoders = nn.ModuleList([FastformerLayer(config) for _ in range(config.num_hidden_layers)])
+        self.position_embeddings = nn.Embedding(config.max_position_embeddings, config.hidden_size)
         self.LayerNorm = nn.LayerNorm(config.hidden_size, eps=config.layer_norm_eps)
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
 
@@ -289,17 +266,13 @@ class SequenceFastformerEncoder(nn.Module):
         >>> encoder_output = model.forward(input_embs, attention_mask, pooler_index=0)
         """
         extended_attention_mask = attention_mask.unsqueeze(1)
-        extended_attention_mask = attention_mask.to(
-            dtype=next(self.parameters()).dtype
-        )  # fp16 compatibility
+        extended_attention_mask = attention_mask.to(dtype=next(self.parameters()).dtype)  # fp16 compatibility
         extended_attention_mask = (1.0 - extended_attention_mask) * -10000.0
 
         # JK IMP:
         batch_size, history_size, n_tokens, hidden_dim = input_embs.shape
 
-        position_ids = torch.arange(
-            history_size, dtype=torch.long, device=input_embs.device
-        )
+        position_ids = torch.arange(history_size, dtype=torch.long, device=input_embs.device)
         position_ids = position_ids.unsqueeze(0).expand(batch_size, -1)
         position_embeddings = self.position_embeddings(position_ids)
 
@@ -355,9 +328,7 @@ class Fastformer(nn.Module):
         else:
             self.word_embedding = word_embedding
 
-        self.embedding_transform = nn.Linear(
-            self.word_embedding.weight.shape[1], config.hidden_size
-        )
+        self.embedding_transform = nn.Linear(self.word_embedding.weight.shape[1], config.hidden_size)
         self.output_layer = nn.Linear(config.hidden_size * 2, 1)
         self.news_encoder = SequenceFastformerEncoder(config)
         self.user_attention_polling = AttentionPooling(config)
@@ -394,20 +365,14 @@ class Fastformer(nn.Module):
             for i in range(embds_history_input.size(1)):
                 slice_input = embds_history_input[:, i, :, :].unsqueeze(1)
                 self.news_encoder(slice_input, attention_mask_tokens)
-                slice_output = self.news_encoder(
-                    slice_input, attention_mask_tokens.unsqueeze(0)
-                )
+                slice_output = self.news_encoder(slice_input, attention_mask_tokens.unsqueeze(0))
                 outputs.append(slice_output.unsqueeze(1))
                 # self.news_encoder_standard(slice_input, attention_mask_tokens)
             user_embeddings = torch.cat(outputs, dim=1)
-            user_encodings = self.user_attention_polling(
-                user_embeddings, attention_mask_history
-            )
+            user_encodings = self.user_attention_polling(user_embeddings, attention_mask_history)
         else:
             # Alternative approach: here we apply the attention on a final concated
-            user_encodings = self.news_encoder(
-                embds_history_input, attention_mask_history_input
-            )
+            user_encodings = self.news_encoder(embds_history_input, attention_mask_history_input)
         return user_encodings
 
     def forward(self, history_input, candidate_input) -> torch.Tensor:
@@ -431,9 +396,7 @@ class Fastformer(nn.Module):
         embds_candidate_input = self.word_embedding(candidate_input)
         embds_candidate_input = self.embedding_transform(embds_candidate_input)
         # output: (batch_size, hidden_dimension)
-        candidate_encoding = self.news_encoder(
-            embds_candidate_input, attention_mask_candidate_input
-        )
+        candidate_encoding = self.news_encoder(embds_candidate_input, attention_mask_candidate_input)
 
         # ====
         concat_representation = torch.concat([user_encoding, candidate_encoding], dim=1)
