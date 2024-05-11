@@ -1,5 +1,5 @@
 
-# ------------------------------------------------------------------------------------------------- decompress data
+# -------------------------------------------------------------------------- decompress data
 # validate ./data/* files
 if [ ! -d data ]; then echo "data/ directory not found"; exit 1; fi
 if ! ls data/*-chunk-* &> /dev/null && ! ls data/*.md5 &> /dev/null; then echo "invalid files found in data/"; exit 1; fi
@@ -24,7 +24,12 @@ tar -xzf data-merged/merged.tar.gz -C data-merged
 rm data-merged/merged.tar.gz
 echo "untarred data-merged/merged.tar.gz"
 
-# ------------------------------------------------------------------------------------------------- install dependencies
+# -------------------------------------------------------------------------- clone submodules
+
+git submodule update --init --recursive
+git submodule foreach git pull origin master
+
+# -------------------------------------------------------------------------- install dependencies
 
 if ! command -v python3 &> /dev/null; then echo "python3 missing"; exit 1; fi
 if ! command -v pip &> /dev/null; then echo "pip missing"; exit 1; fi
