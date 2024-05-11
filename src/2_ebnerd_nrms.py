@@ -1,5 +1,6 @@
 from pathlib import Path
 import tensorflow as tf
+import numpy as np
 import polars as pl
 import os
 
@@ -150,7 +151,7 @@ model = NRMSModel(
     word2vec_embedding=word2vec_embedding,
     seed=42,
 )
-hist = model.model.fit(
+model.model.fit(
     train_dataloader,
     validation_data=val_dataloader,
     epochs=1,

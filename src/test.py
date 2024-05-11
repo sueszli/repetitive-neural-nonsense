@@ -1,6 +1,7 @@
 from pathlib import Path
 import tensorflow as tf
 import polars as pl
+import numpy as np
 import os
 
 from ebrec.utils._constants import *
@@ -99,51 +100,58 @@ article_mapping = create_article_id_to_value_mapping(df=df_articles, value_col=t
 
 # -----------------------------------------------------------------------------------------------------
 
-"""
-define model
-"""
-from ebrec.models.newsrec.dataloader import LSTURDataLoader
 from ebrec.models.newsrec.model_config import hparams_lstur
 from ebrec.models.newsrec.lstur import LSTURModel
 
+"""
+define model
+"""
+
 config = hparams_lstur
 word_embeddings = word2vec_embedding
-model = LSTURModel(hparams=config, word2vec_embedding=word_embeddings)
+model = LSTURModel(hparams=config, word2vec_embedding=word_embeddings, seed=42)
+model.model.summary()
 
+# -----------------------------------------------------------------------------------------------------
+
+from ebrec.models.newsrec.dataloader import LSTURDataLoader
 
 """
-create random batch data
+create batches
 """
+
 BATCH_SIZE = 300
 HISTORY_SIZE = config.history_size
 TITLE_SIZE = config.title_size
 NPRATIO = 4
 
-# his_input_title_shape = (HISTORY_SIZE, TITLE_SIZE) # (50, 30)
-# pred_input_title_shape = (NPRATIO + 1, TITLE_SIZE) # (5, 30)
-# vocab_size = word_embeddings.shape[0] # 119547
-# n_users = config.n_users # 50000
-# label_shape = (NPRATIO + 1,) # (5,)
-# user_indexes_shape = (1,) # (1,)
 
-# his_input_title = np.random.randint(0, vocab_size, (BATCH_SIZE, *his_input_title_shape))
-# pred_input_title = np.random.randint(0, vocab_size, (BATCH_SIZE, *pred_input_title_shape))
-# user_indexes = np.random.randint(0, n_users, size=(BATCH_SIZE, *user_indexes_shape))
-# label_data = np.zeros((BATCH_SIZE, *label_shape), dtype=int)
-# for row in label_data:
-#     row[np.random.choice(label_shape[0])] = 1
+his_input_title_shape = (HISTORY_SIZE, TITLE_SIZE)
+pred_input_title_shape = (NPRATIO + 1, TITLE_SIZE)
+vocab_size = word_embeddings.shape[0]
+n_users = config.n_users
+label_shape = (NPRATIO + 1,)
+user_indexes_shape = (1,)
 
-# print(his_input_title.shape)
-# print(pred_input_title.shape)
-# print(user_indexes.shape)
-# print(label_data.shape)
+his_input_title = np.random.randint(0, vocab_size, (BATCH_SIZE, *his_input_title_shape))
+pred_input_title = np.random.randint(0, vocab_size, (BATCH_SIZE, *pred_input_title_shape))
+user_indexes = np.random.randint(0, n_users, size=(BATCH_SIZE, *user_indexes_shape))
+label_data = np.zeros((BATCH_SIZE, *label_shape), dtype=int)
+for row in label_data:
+    row[np.random.choice(label_shape[0])] = 1
 
-# input = (user_indexes, his_input_title, pred_input_title)
+print(his_input_title.shape)
+print(pred_input_title.shape)
+print(user_indexes.shape)
+print(label_data.shape)
 
-train_dataloader = LSTURDataLoader()
 
 """
-train, predict
+train and predict
 """
-# model.model.fit(input, label_data)
-# model.model.predict(input)
+
+arg1 = (user_indexes, his_input_title, pred_input_title)
+arg2 = label_data
+
+model.model.fit(arg1, arg2)
+model.model.predict(arg1)
