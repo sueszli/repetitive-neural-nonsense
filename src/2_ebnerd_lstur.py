@@ -100,51 +100,10 @@ article_mapping = create_article_id_to_value_mapping(df=df_articles, value_col=t
 
 # -----------------------------------------------------------------------------------------------------
 
-from ebrec.models.newsrec.model_config import hparams_lstur
-from ebrec.models.newsrec.lstur import LSTURModel
+"""
+batch data
+"""
 from ebrec.models.newsrec.dataloader import LSTURDataLoader
-
-
-"""
-define model
-"""
-
-config = hparams_lstur
-model = LSTURModel(hparams=config, word2vec_embedding=word2vec_embedding, seed=42)
-model.model.summary()
-
-# -----------------------------------------------------------------------------------------------------
-
-
-"""
-create batches
-"""
-
-BATCH_SIZE = 300
-HISTORY_SIZE = config.history_size
-TITLE_SIZE = config.title_size
-NPRATIO = 4
-
-
-# his_input_title_shape = (HISTORY_SIZE, TITLE_SIZE)
-# pred_input_title_shape = (NPRATIO + 1, TITLE_SIZE)
-# vocab_size = word_embeddings.shape[0]
-# n_users = config.n_users
-# label_shape = (NPRATIO + 1,)
-# user_indexes_shape = (1,)
-
-# his_input_title = np.random.randint(0, vocab_size, (BATCH_SIZE, *his_input_title_shape))
-# pred_input_title = np.random.randint(0, vocab_size, (BATCH_SIZE, *pred_input_title_shape))
-# user_indexes = np.random.randint(0, n_users, size=(BATCH_SIZE, *user_indexes_shape))
-# label_data = np.zeros((BATCH_SIZE, *label_shape), dtype=int)
-# for row in label_data:
-#     row[np.random.choice(label_shape[0])] = 1
-
-# print(his_input_title.shape)
-# print(pred_input_title.shape)
-# print(user_indexes.shape)
-# print(label_data.shape)
-
 
 train_dataloader = LSTURDataLoader(
     behaviors=df_train,
@@ -171,6 +130,13 @@ test_dataloader = LSTURDataLoader(
     batch_size=32,
 )
 
+
+"""
+train model
+"""
+from ebrec.models.newsrec.model_config import hparams_lstur
+from ebrec.models.newsrec.lstur import LSTURModel
+
 MODEL_NAME = "LSTUR"
 LOG_DIR = f"./runs/{MODEL_NAME}"
 MODEL_WEIGHTS = f"./runs/data/state_dict/{MODEL_NAME}/weights"
@@ -178,18 +144,13 @@ tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=LOG_DIR, histogram
 early_stopping_callback = tf.keras.callbacks.EarlyStopping(monitor="val_loss", patience=2)
 modelcheckpoint_callback = tf.keras.callbacks.ModelCheckpoint(filepath=MODEL_WEIGHTS, save_best_only=True, save_weights_only=True, verbose=1)
 
+config = hparams_lstur
+model = LSTURModel(hparams=config, word2vec_embedding=word2vec_embedding, seed=42)
+model.model.summary()
 hist = model.model.fit(
     train_dataloader,
     validation_data=val_dataloader,
     epochs=1,
     callbacks=[tensorboard_callback, early_stopping_callback, modelcheckpoint_callback],
 )
-
 model.model.load_weights(filepath=MODEL_WEIGHTS)
-
-
-# arg1 = (user_indexes, his_input_title, pred_input_title)
-# arg2 = label_data
-
-# model.model.fit(arg1, arg2)
-# model.model.predict(arg1)
