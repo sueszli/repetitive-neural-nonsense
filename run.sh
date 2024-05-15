@@ -1,4 +1,3 @@
-
 # -------------------------------------------------------------------------- decompress data
 # validate ./data/* files
 if [ ! -d data ]; then echo "data/ directory not found"; exit 1; fi
