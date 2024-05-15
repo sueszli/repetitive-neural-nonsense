@@ -43,9 +43,9 @@ _steps:_
 -   register group and algorithm on tuwel, register organization on "codabench" ✅
 -   download dataset ✅
 -   implement 3 algorithms:
-    -   baseline model from the repository "NRMS on EB-NeRD" from "ebnerd-benchmark" ✅
-    -   "GRU" from "recommenders" repository (it's the core of LSTUR) ✅
-    -   some algorithm of choice
+    -   1 - baseline model from the repository "NRMS on EB-NeRD" from "ebnerd-benchmark" ✅
+    -   2 - "GRU" from "recommenders" repository (it's the core of LSTUR) ✅
+    -   3 - some algorithm of choice ❌ → not implemented yet
 -   improve: check out "beyond metrics" section in the "ebnerd-benchmark" repository
 -   write report pdf
 -   submit to "codabench"
