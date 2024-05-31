@@ -31,13 +31,6 @@ _development links:_
     -   code: https://github.com/recommenders-team/recommenders/blob/main/recommenders/models/deeprec/models/sequential/gru.py
     -   docs: https://recommenders-team.github.io/recommenders/models.html#gru
 
-_rnn theory:_
-
--   https://colah.github.io/posts/2015-08-Understanding-LSTMs/
--   https://colah.github.io/posts/2015-09-NN-Types-FP/
--   https://karpathy.github.io/2015/05/21/rnn-effectiveness/
--   statquest: https://www.youtube.com/watch?v=zxagGtF9MeU&list=PLblh5JKOoLUIxGDQs4LFFD--41Vzf-ME1
-
 _steps:_
 
 -   register group and algorithm on tuwel, register organization on "codabench" ✅
