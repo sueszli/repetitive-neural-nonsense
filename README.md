@@ -1,8 +1,6 @@
-goal: implement a news recommendation algorithm, that predicts user engagement with articles.
-
-assigned model: gru - gated recurrent unit
-
 _general competition links:_
+
+goal: implement a news recommendation algorithm, that predicts user engagement with articles.
 
 -   assignment: https://tuwel.tuwien.ac.at/mod/page/view.php?id=2281418
     -   clarification: https://tuwel.tuwien.ac.at/mod/moodleoverflow/discussion.php?d=8864
