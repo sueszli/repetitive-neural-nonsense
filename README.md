@@ -23,7 +23,9 @@ _development links:_
     -   code: https://github.com/recommenders-team/recommenders/blob/main/recommenders/models/deeprec/models/sequential/gru.py
     -   docs: https://recommenders-team.github.io/recommenders/models.html#gru
 
-_steps:_
+---
+
+_todo:_
 
 -   register group and algorithm on tuwel, register organization on "codabench" ✅
 -   download dataset ✅
