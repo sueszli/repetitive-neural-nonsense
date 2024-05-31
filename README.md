@@ -16,18 +16,10 @@ _general competition links:_
 
 _development links:_
 
--   dataset:
-
-    -   description: https://recsys.eb.dk/dataset/
-
--   ebnerd-benchmark:
-
-    -   quickstart: https://github.com/ebanalyse/ebnerd-benchmark/blob/main/examples/00_quick_start/nrms_ebnerd.ipynb
-    -   LSTUR implementation: https://github.com/ebanalyse/ebnerd-benchmark/blob/main/examples/00_quick_start/lstur_dummy.py 👈
-
+-   dataset: https://recsys.eb.dk/dataset/
+-   ebnerd-benchmark: https://github.com/ebanalyse/ebnerd-benchmark/blob/main/examples/00_quick_start/nrms_ebnerd.ipynb
 -   recommenders:
     -   quickstart: https://github.com/ebanalyse/ebnerd-benchmark/blob/main/examples/00_quick_start/dataset_ebnerd.ipynb
-    -   LSTUR implementation: https://github.com/recommenders-team/recommenders/blob/main/examples/00_quick_start/lstur_MIND.ipynb 👈
     -   code: https://github.com/recommenders-team/recommenders/blob/main/recommenders/models/deeprec/models/sequential/gru.py
     -   docs: https://recommenders-team.github.io/recommenders/models.html#gru
 
@@ -37,8 +29,8 @@ _steps:_
 -   download dataset ✅
 -   implement 3 algorithms:
     -   1 - baseline model from the repository "NRMS on EB-NeRD" from "ebnerd-benchmark" ✅
-    -   2 - "GRU" from "recommenders" repository (it's the core of LSTUR) ✅
-    -   3 - some algorithm of choice ❌ → not implemented yet
+    -   2 - "gru" from "recommenders" repository ❌
+    -   3 - some algorithm of choice ✅ → implemented LSTUR
 -   improve: check out "beyond metrics" section in the "ebnerd-benchmark" repository
 -   write report pdf
 -   submit to "codabench"
