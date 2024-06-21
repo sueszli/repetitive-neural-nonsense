@@ -40,6 +40,7 @@ conda config --set auto_activate_base false
 # conda config --env --set subdir osx-arm64
 
 # ----------------------------------------------------------------------------- start
+
 conda activate base
 
 conda create --yes --name recsys python=3.11 anaconda
