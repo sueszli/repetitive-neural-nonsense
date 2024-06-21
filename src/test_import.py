@@ -1,4 +1,4 @@
 from ebrec.utils._constants import *
 
-print("if this prints, the import was successful! - hooray")
-print(DEFAULT_USER_COL)
+test_val = DEFAULT_USER_COL
+print("importing the ebnerd module was successful! - hooray")
