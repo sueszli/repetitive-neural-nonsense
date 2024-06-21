@@ -59,6 +59,7 @@ pip install ebrec
 pip install black
 pip install recommenders
 
+pip install -e .
 pip install .
 
 python3 ./src/test_import.py
