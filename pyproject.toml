@@ -6,7 +6,6 @@ authors = [
     { name = "Yahya Jabary"},
     { name = "Johannes Kruse", email = "johannes.kruse@eb.dk" },
 ]
-requires-python = ">=3.10, <3.12"
 
 [tool.black]
 line-length = 200

@@ -23,24 +23,41 @@ tar -xzf data-merged/merged.tar.gz -C data-merged
 rm data-merged/merged.tar.gz
 echo "untarred data-merged/merged.tar.gz"
 
-# -------------------------------------------------------------------------- clone submodules
+# -------------------------------------------------------------------------- install conda
 
-git submodule update --init --recursive
-git submodule foreach git pull origin main
+brew install --cask miniconda
+conda update conda
 
-# -------------------------------------------------------------------------- install dependencies
+conda init zsh
+conda init bash
+exit # restart shell
 
-if ! command -v python3 &> /dev/null; then echo "python3 missing"; exit 1; fi
-if ! command -v pip &> /dev/null; then echo "pip missing"; exit 1; fi
+# disable auto-activation of base environment
+conda config --set auto_activate_base false
 
-python3 -m pip install --upgrade pip
+# emulate different platforms in case python wheels are not available
+# conda config --env --set subdir osx-64
+# conda config --env --set subdir osx-arm64
 
-# dev: find out dependencies
-# rm -rf requirements.txt
-# pip install pipreqs
-# pipreqs .
+# ----------------------------------------------------------------------------- start
+conda activate base
 
-# install dependencies
+conda create --yes --name recsys python=3.11 anaconda
+conda activate recsys
+
+pip install transformers==4.37.2
+pip install tensorflow==2.15.1
+pip install torch==2.0.0
+pip install scikit-learn==1.4.0
+pip install numpy==2.0.0
+pip install polars==0.20.31
+pip install pyyaml==6.0.1
+pip install tqdm
+pip install ebrec==0.0.1
 pip install black
 pip install recommenders
-pip install -r requirements.txt
+
+# ----------------------------------------------------------------------------- stop
+conda deactivate
+conda remove --yes --name recsys --all
+conda env list
