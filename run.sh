@@ -59,8 +59,7 @@ pip install ebrec
 pip install black
 pip install recommenders
 
-pip install -e .
-pip install .
+pip install -e ./ebnerd-benchmark-repository
 
 python3 ./src/test_import.py
 
