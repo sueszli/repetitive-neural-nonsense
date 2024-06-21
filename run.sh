@@ -45,6 +45,8 @@ conda activate base
 conda create --yes --name recsys python=3.11 anaconda
 conda activate recsys
 
+pip install .
+
 pip install transformers==4.37.2
 pip install tensorflow==2.15.1
 pip install torch==2.0.0
@@ -53,7 +55,8 @@ pip install numpy==2.0.0
 pip install polars==0.20.31
 pip install pyyaml==6.0.1
 pip install tqdm
-pip install ebrec==0.0.1
+pip install pytest
+pip install ebrec
 pip install black
 pip install recommenders
 

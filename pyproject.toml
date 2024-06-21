@@ -1,5 +1,5 @@
 [project]
-name = "repetitive-neural-nonsense"
+name = "ebrec"
 description = "Ekstra Bladet RecSys Challenge 2024"
 version = "0.0.1"
 authors = [
