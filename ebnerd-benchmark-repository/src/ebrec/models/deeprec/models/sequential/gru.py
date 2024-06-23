@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 import tensorflow as tf
-
+from tensorflow.keras.layers import GRUCell, LSTMCell
 from ebrec.models.deeprec.models.sequential.sequential_base_model import (
     SequentialBaseModel,
 )
@@ -48,7 +48,7 @@ class GRUModel(SequentialBaseModel):
                 [self.item_history_embedding, self.cate_history_embedding], 2
             )
             rnn_outputs, final_state = dynamic_rnn(
-                tf.keras.LSTMCell(self.hidden_size),
+                LSTMCell(self.hidden_size),
                 inputs=self.history_embedding,
                 sequence_length=self.sequence_length,
                 dtype=tf.float32,
@@ -70,7 +70,7 @@ class GRUModel(SequentialBaseModel):
                 [self.item_history_embedding, self.cate_history_embedding], 2
             )
             rnn_outputs, final_state = dynamic_rnn(
-                tf.keras.GRUCell(self.hidden_size),
+                GRUCell(self.hidden_size),
                 inputs=self.history_embedding,
                 sequence_length=self.sequence_length,
                 dtype=tf.float32,
