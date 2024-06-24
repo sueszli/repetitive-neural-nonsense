@@ -118,52 +118,68 @@ def create_vocabs(train_df, articles_df, user_vocab_file, item_vocab_file, cate_
         pickle.dump(item_category_mapping, f)
 
 
-def process_row(row, article_category_dict, default_timestamp):
-    uid = row['user_id']
-    viewed_articles = row['article_ids_inview']
-    click_labels = row['labels']
-
-    accumulated_article_ids = []
-    accumulated_article_categories = []
-    accumulated_timestamps = []
-
-    row_data = []
-
-    for article_id, label in zip(viewed_articles, click_labels):
-        category = article_category_dict.get(article_id, "unknown")
-
-        accumulated_article_ids.append(article_id)
-        accumulated_article_categories.append(category)
-        accumulated_timestamps.append(default_timestamp)
-
-        article_history_str = ",".join(map(str, accumulated_article_ids))
-        category_history_str = ",".join(map(str, accumulated_article_categories))
-        timestamp_history_str = ",".join(accumulated_timestamps)
-
-        row_data.append([label, uid, article_id, category, default_timestamp,
-                         article_history_str, category_history_str, timestamp_history_str])
-
-    return row_data
-
-
 def prepare_format(df_train, df_articles, output_file) -> pd.DataFrame:
-    default_time = "000000"
+    default_value = "000000"
     article_category_dict = df_articles.set_index('article_id')['category'].to_dict()
-    transformed_rows = df_train.apply(lambda row: process_row(row, article_category_dict, default_time), axis = 1)
-    flattened_data = [entry for sublist in transformed_rows for entry in sublist]
-    df_output = pd.DataFrame(flattened_data,
-                             columns = ['label', 'user_id', 'main_article_id', 'main_article_category', 'timestamp',
-                                        'history_article_ids', 'history_category_ids', 'history_timestamps'])
-    df_output.to_csv(output_file, sep = '\t', index = False, header = False)
+    labels = []
+    user_ids = []
+    main_article_ids = []
+    main_article_categories = []
+    timestamps = []
+    history_article_ids = []
+    history_category_ids = []
+    history_timestamps = []
+
+    for index, row in df_train.iterrows():
+        uid = row['user_id']
+        viewed_articles = row['article_ids_inview']
+        click_labels = row['labels']
+
+        accumulated_article_ids = []
+        accumulated_article_categories = []
+        accumulated_timestamps = []
+
+        for article_id, label in zip(viewed_articles, click_labels):
+            category = article_category_dict.get(article_id, "unknown")
+
+            accumulated_article_ids.append(article_id)
+            accumulated_article_categories.append(category)
+            accumulated_timestamps.append(default_value)
+
+            article_history_str = ",".join(map(str, accumulated_article_ids))
+            category_history_str = ",".join(map(str, accumulated_article_categories))
+            timestamp_history_str = ",".join(accumulated_timestamps)
+
+            labels.append(label)
+            user_ids.append(uid)
+            main_article_ids.append(article_id)
+            main_article_categories.append(category)
+            timestamps.append(default_value)
+            history_article_ids.append(article_history_str)
+            history_category_ids.append(category_history_str)
+            history_timestamps.append(timestamp_history_str)
+
+    df_output = pd.DataFrame({
+        'label': labels,
+        'user_id': user_ids,
+        'article_id': main_article_ids,
+        'category_id': main_article_categories,
+        'timestamp': timestamps,
+        'history_article_ids': history_article_ids,
+        'history_category_ids': history_category_ids,
+        'history_timestamps': history_timestamps
+    })
+
+    df_output.to_csv(output_file, sep='\t', index=False, header=False)
 
     return df_output
 
-
 # -----------------------------------------------------------------------------------------------------
+
 
 from ebrec.models.deeprec.models.sequential.gru import GRUModel
 from recommenders.models.deeprec.deeprec_utils import prepare_hparams
-from ebrec.models.deeprec.io.sequential_iterator import SequentialIterator
+from recommenders.models.deeprec.io.sequential_iterator import SequentialIterator
 
 """
 Prepare the data
@@ -175,7 +191,7 @@ test_file_path = "test_file.csv"
 user_vocab_path = 'user_vocab.pkl'
 item_vocab_path = 'item_vocab.pkl'
 cate_vocab_path = 'cate_vocab.pkl'
-output_file = "ebnerd_gru.txt"
+intermediate_output = "ebnerd_gru_intermediate.txt"
 yaml_file = Path(
     os.getcwd()) / "ebnerd-benchmark-repository" / "src" / "ebrec" / "models" / "deeprec" / "config" / "gru.yaml"
 train_num_ngs = 4
@@ -200,7 +216,7 @@ hparams = prepare_hparams(str(yaml_file),
                           embed_l2 = 0.,
                           layer_l2 = 0.,
                           learning_rate = 0.001,
-                          epochs = 5,
+                          epochs = 1,
                           batch_size = 50,
                           show_step = 20,
                           MODEL_DIR = "model/",
@@ -220,6 +236,16 @@ model.fit(
     valid_num_ngs = valid_num_ngs
 )
 
-model.predict(test_file_path, output_file)
+model.predict(test_file_path, intermediate_output)
+
+pred_test = pd.read_csv(intermediate_output)
+submission_path = Path(os.getcwd()) / "submissions" / "ebnerd_gru.txt"
+with open(submission_path, "w") as f:
+    for idx, row in pred_test.iterrows():
+        f.write(f"{idx} {row.iloc[0]}\n")
 
 print(model.run_eval(test_file_path, num_ngs = test_num_ngs))
+
+
+
+
