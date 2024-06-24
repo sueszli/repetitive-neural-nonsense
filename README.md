@@ -1,4 +1,10 @@
-_general competition links:_
+algorithms:
+
+- Neural Recommendation with Multi-Head Self-Attention (NRMS)
+- Neural Recommendation with Gated recurrent units (GRUs)
+- Neural Recommendation with Long- and Short-term User Representations (LSTUR)
+
+<!--
 
 goal: implement a news recommendation algorithm, that predicts user engagement with articles.
 
@@ -25,14 +31,14 @@ _development links:_
 
 _todo:_
 
--   register group and algorithm on tuwel, register organization on "codabench" ✅
--   download dataset ✅
 -   implement 3 algorithms:
-    -   1 - baseline model from the repository "NRMS on EB-NeRD" from "ebnerd-benchmark" ✅
-    -   2 - "gru" from "recommenders" repository ❌
-    -   3 - some algorithm of choice ✅ → implemented LSTUR
+    -   1 - NRMS - assigned (benchmark)
+    -   2 - GRU - assigened
+    -   3 - LSTUR (algorithm of choice)
 -   improve: check out "beyond metrics" section in the "ebnerd-benchmark" repository
 -   write report pdf
 -   submit to "codabench"
 -   submit to gitlab, add "final" tag
 -   upload project report pdf
+
+-->
