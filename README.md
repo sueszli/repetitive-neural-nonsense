@@ -1,8 +1,4 @@
 ```
-                     recurrent neural network
-                     recommender systems
-                     SIGCHI '24
-
                       /^--^\     /^--^\     /^--^\
                       \____/     \____/     \____/
                      /      \   /      \   /      \
@@ -14,6 +10,8 @@
 | | | | | | | | | | | | \/| | | | \/| | | | | |\/ | | | | | | | | | | | |
 |_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|
 ```
+
+implementation of some performant systems for the "ekstra bladet news recommendation dataset"
 
 algorithms:
 
