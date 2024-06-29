@@ -11,7 +11,7 @@
 |_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|
 ```
 
-implementation of some performant systems for the "ekstra bladet news recommendation dataset"
+implementation of some recommender systems for the "ekstra bladet news recommendation dataset"
 
 algorithms:
 
